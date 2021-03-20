@@ -1,5 +1,5 @@
 # The URL the site will be built for
-base_url = "https://palmik.dev"
+base_url = "http://palmik.net"
 compile_sass = true
 build_search_index = true
 generate_feed = true
