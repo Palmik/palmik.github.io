@@ -1,0 +1,25 @@
+# The URL the site will be built for
+base_url = "https://palmik.dev"
+compile_sass = true
+build_search_index = true
+generate_feed = true
+feed_filename = "atom.xml"
+
+title = "Palmík"
+description = "Blog about programming, math and more."
+
+theme = "anpu-zola-theme"
+
+taxonomies = [
+    { name = "categories" },
+    { name = "tags" },
+]
+
+[markdown]
+highlight_code = true
+smart_punctuation = true
+
+[extra]
+anpu_menu_links = [
+    { url = "$BASE_URL/tags", name = "Tags" },
+]
