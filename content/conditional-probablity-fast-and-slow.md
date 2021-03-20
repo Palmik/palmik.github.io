@@ -16,7 +16,7 @@ Because common sense intuition can be often misleading, I will walk you through 
 
 Few weeks ago a friend reached out to me to help them with understanding the solution to a particular question about probablity from the book [Thinking, Fast and Slow](https://en.wikipedia.org/wiki/Thinking,_Fast_and_Slow) by [Daniel Kahneman](https://en.wikipedia.org/wiki/Daniel_Kahneman). The question goes like this:
 
-> A cab was involved ina hit-and-run accident at night. Two cab companies, the Green and the Blue, operate in the city. You are given the following data:
+> A cab was involved in a hit-and-run accident at night. Two cab companies, the Green and the Blue, operate in the city. You are given the following data:
 > 
 > * 85% of the cabs in the city are Green and 15% are Blue.
 > * A witness identified the cab as Blue. The court tested the reliability of the witness user the circumstance that existed on the night of the accident and concluded that the witness correctly identified each one of the two colors 80% of the time and failed 20% of the time.
