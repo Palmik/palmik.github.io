@@ -107,7 +107,7 @@
 &lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
 &lt;code class=&quot;language-math&quot; data-lang=&quot;math&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;P(A | B) = (P(B | A) * P(A)) &#x2F; P(B)
 &lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
-&lt;p&gt;Using this, computing &lt;code&gt;P(B | WB)&lt;&#x2F;code&gt; we need &lt;code&gt;P(WB | B)&lt;&#x2F;code&gt;, &lt;code&gt;P(WB)&lt;&#x2F;code&gt; and &lt;code&gt;P(B)&lt;&#x2F;code&gt;, which we have already computed above.&lt;&#x2F;p&gt;
+&lt;p&gt;Using this, to compute &lt;code&gt;P(B | WB)&lt;&#x2F;code&gt; we need &lt;code&gt;P(WB | B)&lt;&#x2F;code&gt;, &lt;code&gt;P(WB)&lt;&#x2F;code&gt; and &lt;code&gt;P(B)&lt;&#x2F;code&gt;, which we have already computed above.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;bonus-covid-19-tests&quot;&gt;Bonus: Covid-19 tests&lt;a class=&quot;zola-anchor&quot; href=&quot;#bonus-covid-19-tests&quot; aria-label=&quot;Anchor link for: bonus-covid-19-tests&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;p&gt;In the context of vaccines, people often talk about &lt;em&gt;sensitivity&lt;&#x2F;em&gt; and &lt;em&gt;specificity&lt;&#x2F;em&gt;. What are these and how do they relate to conditional probability?&lt;&#x2F;p&gt;
 &lt;h3 id=&quot;sensitivity&quot;&gt;Sensitivity&lt;a class=&quot;zola-anchor&quot; href=&quot;#sensitivity&quot; aria-label=&quot;Anchor link for: sensitivity&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
@@ -121,6 +121,7 @@
 &lt;li&gt;You tested positve&lt;&#x2F;li&gt;
 &lt;li&gt;You tested negative&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
+&lt;p&gt;Solution is left as an exercise to the reader.&lt;&#x2F;p&gt;
 &lt;h2 id=&quot;footnotes&quot;&gt;Footnotes&lt;a class=&quot;zola-anchor&quot; href=&quot;#footnotes&quot; aria-label=&quot;Anchor link for: footnotes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
 &lt;ul&gt;
 &lt;li&gt;[1] In practice, the color of the cab for each test should be selected at random. Try to think about why.&lt;&#x2F;li&gt;

@@ -127,7 +127,7 @@ Alternatively, if `P(B)` is not zero, is:
 P(A | B) = (P(B | A) * P(A)) / P(B)
 ```
 
-Using this, computing `P(B | WB)` we need `P(WB | B)`, `P(WB)` and `P(B)`, which we have already computed above.
+Using this, to compute `P(B | WB)` we need `P(WB | B)`, `P(WB)` and `P(B)`, which we have already computed above.
 
 ## Bonus: Covid-19 tests 
 
@@ -148,6 +148,8 @@ Assume that the coronavirus test has specificity of 0.85 and sensitivity of 0.95
 What is the probability that you have coronavirus if:
 * You tested positve
 * You tested negative
+
+Solution is left as an exercise to the reader.
 
 ## Footnotes
 
