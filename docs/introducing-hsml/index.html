@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <title>Introducing HSML</title>
+    <meta name="description" content="Blog about programming, math and more.">
+
+    <link rel="stylesheet" href="https:&#x2F;&#x2F;palmik.dev&#x2F;main.css">
+
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="https://palmik.dev/atom.xml">
+    
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LPWX53MGDL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-LPWX53MGDL');
+    </script>
+
+    
+    
+</head>
+<body>
+    <a class="skip-main" href="#main">Skip to content</a>
+    <div class="container">
+        <header> 
+            <h1 class="site-header">
+                <a href="https:&#x2F;&#x2F;palmik.dev">Palmík</a>
+            </h1>
+            <nav>
+                
+                
+                
+                <a  href="https:&#x2F;&#x2F;palmik.dev&#x2F;tags">Tags</a>
+                
+                
+            </nav>
+        </header>
+        <main id="main" tabindex="-1">
+            
+
+<article class="post">
+  <header>
+    <h1>Introducing HSML</h1>
+  </header>
+  
+    
+      <div class="article-info">
+          <div class="article-date">23 August 2012</div>
+      </div>
+    
+
+  <div class="content"><p><code>HSML</code> (shorthand for <em>Haskell’s Simple Markup Language</em>) is simple markup language with syntax similar to <code>XML</code> and <code>HTML</code>. It allows you to embed Haskell expressions and declarations in your templates.</p>
+<span id="continue-reading"></span>
+<p>There are two incarnations of <code>HSML</code></p>
+<ul>
+<li>
+<p>Classic <code>HSML</code> (or just <code>HSML</code>): this is the full blown templating system. These templates can contain expressions, declarations and template arguments. They are translated into record type and its instance of <a href="http://hackage.haskell.org/packages/archive/template-hsml/0.2.0.2/doc/html/Template-HSML.html#t:IsTemplate"><code>IsTemplate</code></a> type class.</p>
+</li>
+<li>
+<p>Simplified <code>HSML</code>: this is a cut-down version of the full blown system, the only feature that is lacking are template arguments. Simplified <code>HSML</code> templates are translated into expression of the type <a href="http://hackage.haskell.org/packages/archive/blaze-markup/latest/doc/html/Text-Blaze.html#t:Markup"><code>Text.Blaze.Markup</code></a>.</p>
+</li>
+</ul>
+<p>Valid simplified <code>HSML</code> is valid <code>HSML</code>. Valid <code>HSML</code> with its arguments removed is also valid simplified <code>HSML</code>.</p>
+<p>You can find <code>HSML</code> on <a href="http://hackage.haskell.org/package/template-hsml">hackage</a> and follow its development on <a href="https://github.com/Palmik/HSML">github</a>.</p>
+<h2 id="syntax">Syntax<a class="zola-anchor" href="#syntax" aria-label="Anchor link for: syntax">🔗</a></h2>
+<p>Valid <code>HSML</code> document starts with declarations of the template’s arguments, this is the only syntactical difference from simplified <code>HSML</code>.</p>
+<p>After that follows a list of <em>chunks</em>, where <em>chunk</em> is either <em>text</em>, <em>raw text</em>, <em>element node</em>, <em>element leaf</em> or <em>haskell</em>, where <em>haskell</em> can be either Haskell expression or Haskell declaration.</p>
+<p>What follows is a brief description with examples for every <code>HSML</code> construct.</p>
+<h3 id="text">Text<a class="zola-anchor" href="#text" aria-label="Anchor link for: text">🔗</a></h3>
+<p>The most basic <em>chunk</em> is text. Text can contain any characters, except for <code>&lt;</code> and <code>{</code> which have to be escaped using <code>\</code> (in fact, you can use <code>\</code> to escape any character). Text is also automatically <code>HTML</code> escaped.</p>
+<h4 id="syntax-1">Syntax<a class="zola-anchor" href="#syntax-1" aria-label="Anchor link for: syntax-1">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">? all characters except &#39;&lt;&#39; and &#39;{&#39; which have to be escaped ? 
+</span></code></pre><h4 id="example">Example<a class="zola-anchor" href="#example" aria-label="Anchor link for: example">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">This is text that ends with less-than sign and opening curly bracket \&lt;\{
+</span></code></pre><h3 id="raw-text">Raw Text<a class="zola-anchor" href="#raw-text" aria-label="Anchor link for: raw-text">🔗</a></h3>
+<p>Raw text is similar to text, but is rendered as is, that means without <code>HTML</code> escaping. Raw text can contain any characters, but can not contain <code>|}</code> as a substring (you can circumvent this by escaping).</p>
+<h4 id="syntax-2">Syntax<a class="zola-anchor" href="#syntax-2" aria-label="Anchor link for: syntax-2">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">&quot;{r|&quot; ? all characters, the sequence can not contain &quot;|}&quot; substring ? &quot;|}&quot; 
+</span></code></pre><h4 id="example-1">Example<a class="zola-anchor" href="#example-1" aria-label="Anchor link for: example-1">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">{r|This text is raw|}, but this is not. Do you want &quot;|}&quot; inside raw text?
+No problem, do it like this: {r|foo |\} bar|}
+</span></code></pre><h3 id="element-node">Element node<a class="zola-anchor" href="#element-node" aria-label="Anchor link for: element-node">🔗</a></h3>
+<p>Element node is an element that can contain other <em>chunks</em>. In <code>HTML</code> it could be for example <code>&lt;div&gt;...&lt;/div&gt;</code>. Element nodes can have attributes. Attributes, attribute names and attribute values can also be expressions.</p>
+<p>These additional requirements have to be met:</p>
+<ul>
+<li>
+<p>The attribute expressions have to be of type <a href="http://hackage.haskell.org/packages/archive/blaze-markup/0.5.1.0/doc/html/Text-Blaze-Internal.html#t:Attribute"><code>Text.Blaze.Attribute</code></a>.</p>
+</li>
+<li>
+<p>The attribute name expressions have to be of type <code>String</code>.</p>
+</li>
+<li>
+<p>The attribute value expressions have to be of a type that is an instance of <a href="http://hackage.haskell.org/packages/archive/blaze-markup/latest/doc/html/Text-Blaze.html#t:ToValue"><code>Text.Blaze.ToValue</code></a> or of type <a href="http://hackage.haskell.org/packages/archive/blaze-markup/latest/doc/html/Text-Blaze-Internal.html#t:AttributeValue"><code>Text.Blaze.AttributeValue</code></a>, depending on the <a href="http://hackage.haskell.org/packages/archive/template-hsml/0.2.0.2/doc/html/Template-HSML.html#t:Options">template options</a>.</p>
+</li>
+</ul>
+<h4 id="syntax-3">Syntax<a class="zola-anchor" href="#syntax-3" aria-label="Anchor link for: syntax-3">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">&quot;&lt;&quot; element_name { attribute } &quot;&gt;&quot; { chunk } &quot;&lt;/&quot; element_name &quot;&gt;&quot; 
+</span></code></pre><h4 id="example-2">Example<a class="zola-anchor" href="#example-2" aria-label="Anchor link for: example-2">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code class="language-html" data-lang="html"><span style="color:#c0c5ce;">&lt;</span><span style="color:#bf616a;">ul </span><span style="color:#d08770;">class</span><span style="color:#c0c5ce;">=</span><span style="color:#a3be8c;">{h|userID|}</span><span style="color:#c0c5ce;">&gt;
+  &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;Name: {h|userName|}&lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+  &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;Age: {h|userAge|}&lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+&lt;/</span><span style="color:#bf616a;">ul</span><span style="color:#c0c5ce;">&gt;
+
+&lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">{h|name|}</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">static_value</span><span style="color:#c0c5ce;">&quot; </span><span style="color:#d08770;">static_name</span><span style="color:#c0c5ce;">=</span><span style="color:#a3be8c;">{h|value|}</span><span style="color:#c0c5ce;">&gt;
+  This div has attribute with dynamic name and an attribute with dynamic value.
+&lt;/</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+
+&lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">{h|name|}</span><span style="color:#c0c5ce;">=</span><span style="color:#a3be8c;">{h|value|} </span><span style="color:#d08770;">{h|attribute|}</span><span style="color:#c0c5ce;">&gt;
+  This div has attribute with dynamic name and value.
+&lt;/</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+
+&lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">{h|attribute|}</span><span style="color:#c0c5ce;">&gt;
+  This div has fully dynamic attribute. This allows for optional attributes.
+&lt;/</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+</span></code></pre><h3 id="element-leaf">Element leaf<a class="zola-anchor" href="#element-leaf" aria-label="Anchor link for: element-leaf">🔗</a></h3>
+<p>Element leaf is an element that can not contain any other <em>chunks</em>. In <code>HTML</code> it could be for example <code>&lt;br/&gt;</code>. Element leafs can also have attributes.</p>
+<h4 id="syntax-4">Syntax<a class="zola-anchor" href="#syntax-4" aria-label="Anchor link for: syntax-4">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">&quot;&lt;&quot; element_name { attribute } &quot;/&gt;&quot;
+</span></code></pre><h4 id="example-3">Example<a class="zola-anchor" href="#example-3" aria-label="Anchor link for: example-3">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code class="language-html" data-lang="html"><span style="color:#c0c5ce;">Some things are just broken, &lt;</span><span style="color:#bf616a;">br</span><span style="color:#c0c5ce;">/&gt;
+just like this line.
+</span></code></pre><h3 id="haskell">Haskell<a class="zola-anchor" href="#haskell" aria-label="Anchor link for: haskell">🔗</a></h3>
+<p>The Haskell <em>chunks</em> in your templates can be either expressions or declarations.</p>
+<p>Declarations are scoped, this means that if you have a declaration inside an <em>element node</em>, it can be used only inside that node (that also includes any nested <em>chunks</em>). Top level declarations (those that are not inside any <em>element node</em>) are visible in the whole template.</p>
+<p>Expressions have to be of a type that is an instance of <a href="http://hackage.haskell.org/packages/archive/blaze-markup/latest/doc/html/Text-Blaze.html#t:ToMarkup"><code>Text.Blaze.ToMarkup</code></a> or of type <a href="http://hackage.haskell.org/packages/archive/blaze-markup/latest/doc/html/Text-Blaze.html#t:Markup"><code>Text.Blaze.Markup</code></a>, depending on the <a href="http://hackage.haskell.org/packages/archive/template-hsml/0.2.0.2/doc/html/Template-HSML.html#t:Options">template options</a>.</p>
+<h4 id="syntax-5">Syntax<a class="zola-anchor" href="#syntax-5" aria-label="Anchor link for: syntax-5">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">&quot;{h|&quot; expression | declaration &quot;|}&quot;
+</span></code></pre><h4 id="example-4">Example<a class="zola-anchor" href="#example-4" aria-label="Anchor link for: example-4">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code class="language-html" data-lang="html"><span style="color:#c0c5ce;">{h| omnipresent = &quot;omnipresent&quot; |}
+
+&lt;</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+  {h| local = &quot;first local&quot; |}
+  &lt;</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;{h|omnipresent|}&lt;/</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;
+  &lt;</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;{h|local|}&lt;/</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;
+&lt;/</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+
+&lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span style="color:#c0c5ce;">=</span><span style="color:#a3be8c;">{h|omnipresent|}</span><span style="color:#c0c5ce;">&gt;
+  {h| local = &quot;second local&quot; |}
+  &lt;</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;{h|omnipresent|}&lt;/</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;
+  &lt;</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;{h|local|}&lt;/</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;
+&lt;/</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+</span></code></pre><h3 id="argument">Argument<a class="zola-anchor" href="#argument" aria-label="Anchor link for: argument">🔗</a></h3>
+<p>Arguments get translated into fields of the record type, you can optionally specify the type of the field. If you decide to not specify the type, the type will become a parameter of the record type.</p>
+<h4 id="syntax-6">Syntax<a class="zola-anchor" href="#syntax-6" aria-label="Anchor link for: syntax-6">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">&quot;{a|&quot; &lt;argument name&gt; [ :: &lt;argument type&gt; ] &quot;|}&quot;
+</span></code></pre><h4 id="example-5">Example<a class="zola-anchor" href="#example-5" aria-label="Anchor link for: example-5">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code><span style="color:#c0c5ce;">{a| name :: String |}
+{a| age :: Int |}
+{a| mystery |}
+
+And the mystery was: {h|mystery|}
+</span></code></pre><h2 id="usage">Usage<a class="zola-anchor" href="#usage" aria-label="Anchor link for: usage">🔗</a></h2>
+<p>If you have come this far, you might be interested in trying out <code>HSML</code>. The <code>Template.HSML</code> module exports all that you need and I recommend you to read the <a href="http://hackage.haskell.org/packages/archive/template-hsml/0.2.0.2/doc/html/Template-HSML.html">documentation</a> or ask me to improve it if you happen to find it lacking.</p>
+<p>Often the most efficient way to learn is by example, so here is one:</p>
+<h4 id="main-hs">Main.hs<a class="zola-anchor" href="#main-hs" aria-label="Anchor link for: main-hs">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code class="language-haskell" data-lang="haskell"><span style="color:#c0c5ce;">{-# </span><span style="color:#b48ead;">LANGUAGE</span><span style="color:#c0c5ce;"> TemplateHaskell #-}
+{-# </span><span style="color:#b48ead;">LANGUAGE</span><span style="color:#c0c5ce;"> QuasiQuotes     #-}
+{-# </span><span style="color:#b48ead;">LANGUAGE</span><span style="color:#c0c5ce;"> RecordWildCards #-}
+
+</span><span style="color:#65737e;">------------------------------------------------------------------------------
+</span><span style="color:#b48ead;">import           </span><span style="color:#c0c5ce;">Control.Monad
+</span><span style="color:#65737e;">------------------------------------------------------------------------------
+</span><span style="color:#b48ead;">import           </span><span style="color:#c0c5ce;">Data.Monoid (</span><span style="color:#8fa1b3;">(&lt;&gt;)</span><span style="color:#c0c5ce;">)
+</span><span style="color:#65737e;">------------------------------------------------------------------------------
+</span><span style="color:#b48ead;">import qualified </span><span style="color:#c0c5ce;">Text.Blaze.Html5 </span><span style="color:#b48ead;">as </span><span style="color:#c0c5ce;">B
+</span><span style="color:#65737e;">------------------------------------------------------------------------------
+</span><span style="color:#b48ead;">import           </span><span style="color:#c0c5ce;">Template.HSML
+</span><span style="color:#65737e;">------------------------------------------------------------------------------
+
+
+</span><span style="color:#b48ead;">data </span><span style="color:#d08770;">User </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">User
+</span><span style="color:#c0c5ce;">    { userID :: </span><span style="color:#d08770;">Int
+    </span><span style="color:#c0c5ce;">, userName :: </span><span style="color:#d08770;">String
+    </span><span style="color:#c0c5ce;">, userAge :: </span><span style="color:#d08770;">Int
+</span><span style="color:#c0c5ce;">    } 
+
+</span><span style="color:#b48ead;">$(</span><span style="color:#c0c5ce;">hsmlFileWith (defaultOptions &quot;</span><span style="color:#a3be8c;">Default</span><span style="color:#c0c5ce;">&quot;) &quot;</span><span style="color:#a3be8c;">default_layout.hsml</span><span style="color:#c0c5ce;">&quot;)
+
+</span><span style="color:#8fa1b3;">homeTemplate </span><span style="color:#b48ead;">::</span><span style="color:#c0c5ce;"> [</span><span style="color:#b48ead;">User</span><span style="color:#c0c5ce;">] </span><span style="color:#b48ead;">-&gt; B</span><span style="color:#c0c5ce;">.</span><span style="color:#b48ead;">Markup
+</span><span style="color:#c0c5ce;">homeTemplate users = renderTemplate </span><span style="color:#d08770;">Default
+</span><span style="color:#c0c5ce;">    { defaultTitle = &quot;</span><span style="color:#a3be8c;">Home page</span><span style="color:#c0c5ce;">&quot;
+    , defaultSectionMiddle = middle
+    , defaultSectionFooter = </span><span style="color:#b48ead;">[m|</span><span style="color:#a3be8c;"> &lt;p&gt;Generated by HSML&lt;/p&gt; </span><span style="color:#b48ead;">|]
+</span><span style="color:#c0c5ce;">    }
+    </span><span style="color:#b48ead;">where
+</span><span style="color:#c0c5ce;">      middle = </span><span style="color:#b48ead;">[m|
+</span><span style="color:#c0c5ce;">        &lt;ul class=&quot;users&quot;&gt;
+          {h| forM_ users wrap |}
+</span><span style="color:#a3be8c;">        &lt;/ul&gt; </span><span style="color:#b48ead;">|]
+</span><span style="color:#c0c5ce;">      wrap u = </span><span style="color:#b48ead;">[m|</span><span style="color:#a3be8c;">&lt;li&gt; {h| userTemplate u |} &lt;/li&gt;</span><span style="color:#b48ead;">|]
+        
+</span><span style="color:#8fa1b3;">userTemplate </span><span style="color:#b48ead;">:: User -&gt; B</span><span style="color:#c0c5ce;">.</span><span style="color:#b48ead;">Markup
+</span><span style="color:#c0c5ce;">userTemplate </span><span style="color:#d08770;">User</span><span style="color:#c0c5ce;">{..} = </span><span style="color:#b48ead;">[m|
+</span><span style="color:#c0c5ce;">  &lt;ul class={h| &quot;user-&quot; &lt;&gt; show userID |}&gt;
+    &lt;li&gt;Name: {h|userName|}&lt;/li&gt;
+    &lt;li&gt;Age: {h|userAge|}&lt;/li&gt;
+</span><span style="color:#a3be8c;">  &lt;/ul&gt; </span><span style="color:#b48ead;">|]
+</span></code></pre><h4 id="default-layout-hsml">default_layout.hsml<a class="zola-anchor" href="#default-layout-hsml" aria-label="Anchor link for: default-layout-hsml">🔗</a></h4>
+<pre style="background-color:#2b303b;">
+<code class="language-html" data-lang="html"><span style="color:#c0c5ce;">{a| title :: String |}
+{a| sectionMiddle :: B.Markup |}
+{a| sectionFooter :: B.Markup |}
+
+{h| B.docType |}
+
+&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">en</span><span style="color:#c0c5ce;">&quot;&gt;
+  &lt;</span><span style="color:#bf616a;">head</span><span style="color:#c0c5ce;">&gt;
+    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">utf-8</span><span style="color:#c0c5ce;">&quot;/&gt;
+    &lt;</span><span style="color:#bf616a;">title</span><span style="color:#c0c5ce;">&gt;{h|title|}&lt;/</span><span style="color:#bf616a;">title</span><span style="color:#c0c5ce;">&gt;
+  &lt;/</span><span style="color:#bf616a;">head</span><span style="color:#c0c5ce;">&gt;
+
+  &lt;</span><span style="color:#bf616a;">body</span><span style="color:#c0c5ce;">&gt;
+    &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">section middle</span><span style="color:#c0c5ce;">&quot;&gt;
+      {h|sectionMiddle|}
+    &lt;/</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+
+    &lt;</span><span style="color:#bf616a;">footer</span><span style="color:#c0c5ce;">&gt;
+      {h|sectionFooter|}
+    &lt;/</span><span style="color:#bf616a;">footer</span><span style="color:#c0c5ce;">&gt;
+  &lt;/</span><span style="color:#bf616a;">body</span><span style="color:#c0c5ce;">&gt;
+&lt;/</span><span style="color:#bf616a;">html</span><span style="color:#c0c5ce;">&gt;
+</span></code></pre>
+<p>And the prettified result of <code>renderMarkup $ homeTemplate [User 1 &quot;Jon Doe&quot; 16, User 2 &quot;Jane Roe&quot; 17]</code> is this:</p>
+<pre style="background-color:#2b303b;">
+<code class="language-html" data-lang="html"><span style="color:#c0c5ce;">&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">HTML</span><span style="color:#c0c5ce;">&gt;
+&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">en</span><span style="color:#c0c5ce;">&quot;&gt;
+  &lt;</span><span style="color:#bf616a;">head</span><span style="color:#c0c5ce;">&gt;
+    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">utf-8</span><span style="color:#c0c5ce;">&quot;&gt;
+    &lt;</span><span style="color:#bf616a;">title</span><span style="color:#c0c5ce;">&gt;Home page&lt;/</span><span style="color:#bf616a;">title</span><span style="color:#c0c5ce;">&gt;
+  &lt;/</span><span style="color:#bf616a;">head</span><span style="color:#c0c5ce;">&gt;
+
+  &lt;</span><span style="color:#bf616a;">body</span><span style="color:#c0c5ce;">&gt;
+    &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">section middle</span><span style="color:#c0c5ce;">&quot;&gt;
+      &lt;</span><span style="color:#bf616a;">ul </span><span style="color:#d08770;">class</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">users</span><span style="color:#c0c5ce;">&quot;&gt;
+        &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+          &lt;</span><span style="color:#bf616a;">ul </span><span style="color:#d08770;">class</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">user-1</span><span style="color:#c0c5ce;">&quot;&gt;
+            &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;Name: Jon Doe&lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+            &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;Age: 16&lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+          &lt;/</span><span style="color:#bf616a;">ul</span><span style="color:#c0c5ce;">&gt;
+        &lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+        &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+          &lt;</span><span style="color:#bf616a;">ul </span><span style="color:#d08770;">class</span><span style="color:#c0c5ce;">=&quot;</span><span style="color:#a3be8c;">user-2</span><span style="color:#c0c5ce;">&quot;&gt;
+            &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;Name: Jane Roe&lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+            &lt;</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;Age: 17&lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+          &lt;/</span><span style="color:#bf616a;">ul</span><span style="color:#c0c5ce;">&gt;
+        &lt;/</span><span style="color:#bf616a;">li</span><span style="color:#c0c5ce;">&gt;
+      &lt;/</span><span style="color:#bf616a;">ul</span><span style="color:#c0c5ce;">&gt;
+    &lt;/</span><span style="color:#bf616a;">div</span><span style="color:#c0c5ce;">&gt;
+
+    &lt;</span><span style="color:#bf616a;">footer</span><span style="color:#c0c5ce;">&gt;
+      &lt;</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;Generated by HSML&lt;/</span><span style="color:#bf616a;">p</span><span style="color:#c0c5ce;">&gt;
+    &lt;/</span><span style="color:#bf616a;">footer</span><span style="color:#c0c5ce;">&gt;
+  &lt;/</span><span style="color:#bf616a;">body</span><span style="color:#c0c5ce;">&gt;
+&lt;/</span><span style="color:#bf616a;">html</span><span style="color:#c0c5ce;">&gt;
+</span></code></pre><h2 id="thoughts">Thoughts<a class="zola-anchor" href="#thoughts" aria-label="Anchor link for: thoughts">🔗</a></h2>
+<p>Currently, nesting <code>HSML</code> within expressions or declarations within <code>HSML</code> (and of course deeper nesting) is not really user-friendly. That’s because neither the embedded Haskell expressions nor declarations can contain Quasi Quotes (as <code>haskell-src-meta</code> does not support that at the moment – there is a pending <a href="https://github.com/benmachine/haskell-src-meta/issues/9">ticket</a> for that). But I think that it should be possible to work around that by transforming <a href="http://hackage.haskell.org/packages/archive/haskell-src-exts/latest/doc/html/Language-Haskell-Exts-Syntax.html#t:Exp"><code>QuasiQuote</code></a> into <a href="http://hackage.haskell.org/packages/archive/haskell-src-exts/latest/doc/html/Language-Haskell-Exts-Syntax.html#t:Exp"><code>SpliceExp</code></a> – I will definitely try it out.</p>
+<h2 id="epilogue">Epilogue<a class="zola-anchor" href="#epilogue" aria-label="Anchor link for: epilogue">🔗</a></h2>
+<p>I hope you liked the article and <code>HSML</code>. There are still few things that remain to be done, like better test coverage, measure the impact on run-time performance, consider using <code>attoparsec</code> instead of <code>parsec</code>, etc.</p>
+<p>If you have any comments or ideas for improvement, I will gladly hear them out.</p>
+</div>
+  
+    <div class="article-info">
+      <div class="article-taxonomies">
+          
+          
+              <ul class="article-tags">
+                  
+                  <li><a href="https://palmik.dev/tags/haskell/">#Haskell</a></li>
+                  
+              </ul>
+          
+      </div>
+    </div>
+
+</article>
+
+
+        </main>
+        <footer>
+            <p>
+                © Palmík 2021<br>
+            </p>
+            <p>
+                
+                
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

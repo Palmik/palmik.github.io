@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://palmik.dev/sitemap.xml

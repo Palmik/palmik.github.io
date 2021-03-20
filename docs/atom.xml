@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+	<title>Palmík</title>
+	<subtitle>Blog about programming, math and more.</subtitle>
+	<link href="https://palmik.dev/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://palmik.dev"/>
+	<generator uri="https://www.getzola.org/">Zola</generator>
+	<updated>2021-03-20T00:00:00+00:00</updated>
+	<id>https://palmik.dev/atom.xml</id>
+	<entry xml:lang="en">
+		<title>Conditional Probability, Fast and Slow</title>
+		<published>2021-03-20T00:00:00+00:00</published>
+		<updated>2021-03-20T00:00:00+00:00</updated>
+		<link href="https://palmik.dev/conditional-probablity-fast-and-slow/" type="text/html"/>
+		<id>https://palmik.dev/conditional-probablity-fast-and-slow/</id>
+		<content type="html">&lt;p&gt;Now more than ever, we’re bombarded with terms like “sensitivity” or “specificity” in relation to Covid-19 tests. It turns out that to understand these, you first need to understand conditional probability. &lt;&#x2F;p&gt;
+&lt;p&gt;Because common sense intuition can be often misleading, I will walk you through a conditional probablity problem about Blue and Green cabbies from the book &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Thinking,_Fast_and_Slow&quot;&gt;Thinking, Fast and Slow&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;hr&#x2F;&gt;
+&lt;p&gt;Few weeks ago a friend reached out to me to help them with understanding the solution to a particular question about probablity from the book &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Thinking,_Fast_and_Slow&quot;&gt;Thinking, Fast and Slow&lt;&#x2F;a&gt; by &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Daniel_Kahneman&quot;&gt;Daniel Kahneman&lt;&#x2F;a&gt;. The question goes like this:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A cab was involved ina hit-and-run accident at night. Two cab companies, the Green and the Blue, operate in the city. You are given the following data:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;85% of the cabs in the city are Green and 15% are Blue.&lt;&#x2F;li&gt;
+&lt;li&gt;A witness identified the cab as Blue. The court tested the reliability of the witness user the circumstance that existed on the night of the accident and concluded that the witness correctly identified each one of the two colors 80% of the time and failed 20% of the time.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;What is the probability that the cab involved in the accident was Blue rather than Green?&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;notation&quot;&gt;Notation&lt;a class=&quot;zola-anchor&quot; href=&quot;#notation&quot; aria-label=&quot;Anchor link for: notation&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Let’s introduce some useful notation for different “events”:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;G&lt;&#x2F;code&gt; = green caused the accident &lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;B&lt;&#x2F;code&gt; = blue caused the accident &lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;WG&lt;&#x2F;code&gt; = &lt;code&gt;!WB&lt;&#x2F;code&gt; = witness testified green = witness did not testify blue&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;WB&lt;&#x2F;code&gt; = &lt;code&gt;!WB&lt;&#x2F;code&gt; = witness testified blue = witness did not testify green&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;understanding-the-problem-statement&quot;&gt;Understanding the problem statement&lt;a class=&quot;zola-anchor&quot; href=&quot;#understanding-the-problem-statement&quot; aria-label=&quot;Anchor link for: understanding-the-problem-statement&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;What does it mean that the court tested the reliabilty of the witness? Easy way to think about this is that the court performed 100 tests where they recreated the situation of the accident (like weather and light conditions), in 85 of those tests the cab was Blue and in 15 the cab was Green [1]. This allows the court to compute:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;P(WB | B)&lt;&#x2F;code&gt; – the probability that the witness says the cab was Blue &lt;em&gt;given that it was really Blue&lt;&#x2F;em&gt;. In other words, the probability that the witness is right if the culprit is Blue.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;P(WB | G)&lt;&#x2F;code&gt; – the probability that the witness says the cab was Blue &lt;em&gt;given that it was really Green&lt;&#x2F;em&gt;. In other words, the probability that the witness is wrong if the culprit is Green.&lt;&#x2F;li&gt;
+&lt;li&gt;Similary for &lt;code&gt;P(WG | G)&lt;&#x2F;code&gt; and &lt;code&gt;P(WG | B)&lt;&#x2F;code&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Based on the problem statement:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;P(WB | B)&lt;&#x2F;code&gt; = &lt;code&gt;P(WG | G)&lt;&#x2F;code&gt; = 0.8&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;P(WB | G)&lt;&#x2F;code&gt; = &lt;code&gt;P(WG | B)&lt;&#x2F;code&gt; = 0.2&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;We will also need to make an assumption [2], which is that drivers of the two companies are equally likely to commit hit-and-run accidents.&lt;&#x2F;p&gt;
+&lt;p&gt;Based on the problem statement, since 85% of cabs are Green and 15% of them are Blue and each cab is equally likely to cause an accident:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;P(B)&lt;&#x2F;code&gt; = 0.85&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;P(G)&lt;&#x2F;code&gt; = 0.15&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Using our notation, the task is to compute &lt;code&gt;P(B | WB)&lt;&#x2F;code&gt; – the probability that the cab involved in the accident was Blue &lt;strong&gt;given that the witness identified the cab as Blue.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;solving-the-problem&quot;&gt;Solving the problem&lt;a class=&quot;zola-anchor&quot; href=&quot;#solving-the-problem&quot; aria-label=&quot;Anchor link for: solving-the-problem&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;We are to find &lt;code&gt;P(B | WB)&lt;&#x2F;code&gt;. We are given:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;P(G) = 0.85&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;P(B) = 0.15&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;P(WB | B) = P(WG | G) = 0.8&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;P(WB | G) = P(WG | B) = 0.2&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;To solve this, we will refer to &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Conditional_probability&quot;&gt;the definition of conditional probability&lt;&#x2F;a&gt;:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;P(A | B) * P(B) = P(A and B)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Applying this to our problem:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;P(B | WB) * P(WB) = P(B and WB)&lt;&#x2F;code&gt; therefore &lt;code&gt;P(B | WB) = P(B and WB) &#x2F; P(WB)&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;P(WB | B) * P(B) = P(B and WB)&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Based on (1), to compute &lt;code&gt;P(B | WB)&lt;&#x2F;code&gt; we need to know &lt;code&gt;P(B and WB)&lt;&#x2F;code&gt; and &lt;code&gt;P(WB)&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;To compute &lt;code&gt;P(B and WB)&lt;&#x2F;code&gt; we use (2). We already know &lt;code&gt;P(WB | B)&lt;&#x2F;code&gt; and &lt;code&gt;P(B)&lt;&#x2F;code&gt;, so we simply substitute: &lt;code&gt;P(WB | B) * P(B) = 0.8 * 0.15&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;To compute &lt;code&gt;P(WB)&lt;&#x2F;code&gt; we need to consider when &lt;code&gt;WB&lt;&#x2F;code&gt; can occur (i.e. the witness says that the car is Blue)? Either:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;The car is Blue and the witness is right: &lt;code&gt;P(B) * P(WB | B)&lt;&#x2F;code&gt; = &lt;code&gt;0.15 * 0.8&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;The car is Green and the witness is wrong: &lt;code&gt;P(B) * P(WB | G)&lt;&#x2F;code&gt; = &lt;code&gt;0.15 * 0.2&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Given that these two options are exclusive, we can sum up these two probabilities to obtain &lt;code&gt;P(WB)&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Now that we know both &lt;code&gt;P(B and WB)&lt;&#x2F;code&gt; and &lt;code&gt;P(WB)&lt;&#x2F;code&gt;, we simply substitue into (2):&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-math&quot; data-lang=&quot;math&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;P(B | WB) = P(B and WB) &#x2F; P(WB)
+          = (0.8 * 0.15) &#x2F; P(WB)
+          = (0.8 * 0.15) &#x2F; (0.15 * 0.8 + 0.15 * 0.2)
+          = 0.41379...
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And voila! This is the answer.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bonus-using-the-tabular-method&quot;&gt;Bonus: Using the “tabular” method&lt;a class=&quot;zola-anchor&quot; href=&quot;#bonus-using-the-tabular-method&quot; aria-label=&quot;Anchor link for: bonus-using-the-tabular-method&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;&lt;&#x2F;th&gt;&lt;th&gt;Blue criminal&lt;&#x2F;th&gt;&lt;th&gt;Green criminal&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Witness testified Blue&lt;&#x2F;td&gt;&lt;td&gt;&lt;code&gt;P(B and WB) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;P(B) * (WB | B) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;0.15 * 0.8&lt;&#x2F;code&gt;&lt;&#x2F;td&gt;&lt;td&gt;&lt;code&gt;P(G and WB) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;P(G) * P(WB | G) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;0.85 * 0.2&lt;&#x2F;code&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Witness testified Green&lt;&#x2F;td&gt;&lt;td&gt;&lt;code&gt;P(B and WG) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;P(B) * P(WG | B) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;0.15 * 0.2&lt;&#x2F;code&gt;&lt;&#x2F;td&gt;&lt;td&gt;&lt;code&gt;P(G and WG) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;P(G) * P(WG | G) =&lt;&#x2F;code&gt;&lt;br&#x2F;&gt;&lt;code&gt;0.85 * 0.8&lt;&#x2F;code&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;ul&gt;
+&lt;li&gt;All of these 4 different events &lt;code&gt;P(B and WB)&lt;&#x2F;code&gt;, &lt;code&gt;P(B and WG)&lt;&#x2F;code&gt;, etc. are clearly disjoint&lt;&#x2F;li&gt;
+&lt;li&gt;The sum of the “testified blue” row is equal to P(WB)&lt;&#x2F;li&gt;
+&lt;li&gt;The sum of the “testified green” row is equal to P(WG)&lt;&#x2F;li&gt;
+&lt;li&gt;The sum of the “blue criminal” column is equal to P(B)&lt;&#x2F;li&gt;
+&lt;li&gt;The sum of the “green criminal” column is equal to P(G)&lt;&#x2F;li&gt;
+&lt;li&gt;This table allows you to easily solve any of the conditional probabilities involving G or B and WG or WB&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;bonus-using-the-bayes-theorem&quot;&gt;Bonus: Using the Bayes’ theorem&lt;a class=&quot;zola-anchor&quot; href=&quot;#bonus-using-the-bayes-theorem&quot; aria-label=&quot;Anchor link for: bonus-using-the-bayes-theorem&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;The &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Bayes%27_theorem&quot;&gt;Bayes’ theorem&lt;&#x2F;a&gt; states:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-math&quot; data-lang=&quot;math&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;P(A | B) * P(B) = P(B | A) * P(A)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Alternatively, if &lt;code&gt;P(B)&lt;&#x2F;code&gt; is not zero, is:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-math&quot; data-lang=&quot;math&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;P(A | B) = (P(B | A) * P(A)) &#x2F; P(B)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Using this, computing &lt;code&gt;P(B | WB)&lt;&#x2F;code&gt; we need &lt;code&gt;P(WB | B)&lt;&#x2F;code&gt;, &lt;code&gt;P(WB)&lt;&#x2F;code&gt; and &lt;code&gt;P(B)&lt;&#x2F;code&gt;, which we have already computed above.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bonus-covid-19-tests&quot;&gt;Bonus: Covid-19 tests&lt;a class=&quot;zola-anchor&quot; href=&quot;#bonus-covid-19-tests&quot; aria-label=&quot;Anchor link for: bonus-covid-19-tests&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;In the context of vaccines, people often talk about &lt;em&gt;sensitivity&lt;&#x2F;em&gt; and &lt;em&gt;specificity&lt;&#x2F;em&gt;. What are these and how do they relate to conditional probability?&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;sensitivity&quot;&gt;Sensitivity&lt;a class=&quot;zola-anchor&quot; href=&quot;#sensitivity&quot; aria-label=&quot;Anchor link for: sensitivity&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;The probability that the test comes out as positive if the tested subject has the dissease. &lt;code&gt;P(tests positive | has disease)&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;specificity&quot;&gt;Specificity&lt;a class=&quot;zola-anchor&quot; href=&quot;#specificity&quot; aria-label=&quot;Anchor link for: specificity&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;The probability that the test comes out as negative if the tested subject does not have the disease: &lt;code&gt;P(tests negative | does not have disease)&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;sample-problem&quot;&gt;Sample problem&lt;a class=&quot;zola-anchor&quot; href=&quot;#sample-problem&quot; aria-label=&quot;Anchor link for: sample-problem&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Assume that the coronavirus test has specificity of 0.85 and sensitivity of 0.95 and that 10% of the population has coronavirus at the moment.&lt;&#x2F;p&gt;
+&lt;p&gt;What is the probability that you have coronavirus if:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;You tested positve&lt;&#x2F;li&gt;
+&lt;li&gt;You tested negative&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;footnotes&quot;&gt;Footnotes&lt;a class=&quot;zola-anchor&quot; href=&quot;#footnotes&quot; aria-label=&quot;Anchor link for: footnotes&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;[1] In practice, the color of the cab for each test should be selected at random. Try to think about why.&lt;&#x2F;li&gt;
+&lt;li&gt;[2] Ideally this would be explicitly specified in the problem statement.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>Introducing HSML</title>
+		<published>2012-08-23T00:00:00+00:00</published>
+		<updated>2012-08-23T00:00:00+00:00</updated>
+		<link href="https://palmik.dev/introducing-hsml/" type="text/html"/>
+		<id>https://palmik.dev/introducing-hsml/</id>
+		<content type="html">&lt;p&gt;&lt;code&gt;HSML&lt;&#x2F;code&gt; (shorthand for &lt;em&gt;Haskell’s Simple Markup Language&lt;&#x2F;em&gt;) is simple markup language with syntax similar to &lt;code&gt;XML&lt;&#x2F;code&gt; and &lt;code&gt;HTML&lt;&#x2F;code&gt;. It allows you to embed Haskell expressions and declarations in your templates.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;There are two incarnations of &lt;code&gt;HSML&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Classic &lt;code&gt;HSML&lt;&#x2F;code&gt; (or just &lt;code&gt;HSML&lt;&#x2F;code&gt;): this is the full blown templating system. These templates can contain expressions, declarations and template arguments. They are translated into record type and its instance of &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;template-hsml&#x2F;0.2.0.2&#x2F;doc&#x2F;html&#x2F;Template-HSML.html#t:IsTemplate&quot;&gt;&lt;code&gt;IsTemplate&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; type class.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Simplified &lt;code&gt;HSML&lt;&#x2F;code&gt;: this is a cut-down version of the full blown system, the only feature that is lacking are template arguments. Simplified &lt;code&gt;HSML&lt;&#x2F;code&gt; templates are translated into expression of the type &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;blaze-markup&#x2F;latest&#x2F;doc&#x2F;html&#x2F;Text-Blaze.html#t:Markup&quot;&gt;&lt;code&gt;Text.Blaze.Markup&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Valid simplified &lt;code&gt;HSML&lt;&#x2F;code&gt; is valid &lt;code&gt;HSML&lt;&#x2F;code&gt;. Valid &lt;code&gt;HSML&lt;&#x2F;code&gt; with its arguments removed is also valid simplified &lt;code&gt;HSML&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;You can find &lt;code&gt;HSML&lt;&#x2F;code&gt; on &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;package&#x2F;template-hsml&quot;&gt;hackage&lt;&#x2F;a&gt; and follow its development on &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Palmik&#x2F;HSML&quot;&gt;github&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;syntax&quot;&gt;Syntax&lt;a class=&quot;zola-anchor&quot; href=&quot;#syntax&quot; aria-label=&quot;Anchor link for: syntax&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Valid &lt;code&gt;HSML&lt;&#x2F;code&gt; document starts with declarations of the template’s arguments, this is the only syntactical difference from simplified &lt;code&gt;HSML&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;After that follows a list of &lt;em&gt;chunks&lt;&#x2F;em&gt;, where &lt;em&gt;chunk&lt;&#x2F;em&gt; is either &lt;em&gt;text&lt;&#x2F;em&gt;, &lt;em&gt;raw text&lt;&#x2F;em&gt;, &lt;em&gt;element node&lt;&#x2F;em&gt;, &lt;em&gt;element leaf&lt;&#x2F;em&gt; or &lt;em&gt;haskell&lt;&#x2F;em&gt;, where &lt;em&gt;haskell&lt;&#x2F;em&gt; can be either Haskell expression or Haskell declaration.&lt;&#x2F;p&gt;
+&lt;p&gt;What follows is a brief description with examples for every &lt;code&gt;HSML&lt;&#x2F;code&gt; construct.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;text&quot;&gt;Text&lt;a class=&quot;zola-anchor&quot; href=&quot;#text&quot; aria-label=&quot;Anchor link for: text&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;The most basic &lt;em&gt;chunk&lt;&#x2F;em&gt; is text. Text can contain any characters, except for &lt;code&gt;&amp;lt;&lt;&#x2F;code&gt; and &lt;code&gt;{&lt;&#x2F;code&gt; which have to be escaped using &lt;code&gt;\&lt;&#x2F;code&gt; (in fact, you can use &lt;code&gt;\&lt;&#x2F;code&gt; to escape any character). Text is also automatically &lt;code&gt;HTML&lt;&#x2F;code&gt; escaped.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;syntax-1&quot;&gt;Syntax&lt;a class=&quot;zola-anchor&quot; href=&quot;#syntax-1&quot; aria-label=&quot;Anchor link for: syntax-1&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;? all characters except &amp;#39;&amp;lt;&amp;#39; and &amp;#39;{&amp;#39; which have to be escaped ? 
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h4 id=&quot;example&quot;&gt;Example&lt;a class=&quot;zola-anchor&quot; href=&quot;#example&quot; aria-label=&quot;Anchor link for: example&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;This is text that ends with less-than sign and opening curly bracket \&amp;lt;\{
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;raw-text&quot;&gt;Raw Text&lt;a class=&quot;zola-anchor&quot; href=&quot;#raw-text&quot; aria-label=&quot;Anchor link for: raw-text&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Raw text is similar to text, but is rendered as is, that means without &lt;code&gt;HTML&lt;&#x2F;code&gt; escaping. Raw text can contain any characters, but can not contain &lt;code&gt;|}&lt;&#x2F;code&gt; as a substring (you can circumvent this by escaping).&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;syntax-2&quot;&gt;Syntax&lt;a class=&quot;zola-anchor&quot; href=&quot;#syntax-2&quot; aria-label=&quot;Anchor link for: syntax-2&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;{r|&amp;quot; ? all characters, the sequence can not contain &amp;quot;|}&amp;quot; substring ? &amp;quot;|}&amp;quot; 
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h4 id=&quot;example-1&quot;&gt;Example&lt;a class=&quot;zola-anchor&quot; href=&quot;#example-1&quot; aria-label=&quot;Anchor link for: example-1&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{r|This text is raw|}, but this is not. Do you want &amp;quot;|}&amp;quot; inside raw text?
+No problem, do it like this: {r|foo |\} bar|}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;element-node&quot;&gt;Element node&lt;a class=&quot;zola-anchor&quot; href=&quot;#element-node&quot; aria-label=&quot;Anchor link for: element-node&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Element node is an element that can contain other &lt;em&gt;chunks&lt;&#x2F;em&gt;. In &lt;code&gt;HTML&lt;&#x2F;code&gt; it could be for example &lt;code&gt;&amp;lt;div&amp;gt;...&amp;lt;&#x2F;div&amp;gt;&lt;&#x2F;code&gt;. Element nodes can have attributes. Attributes, attribute names and attribute values can also be expressions.&lt;&#x2F;p&gt;
+&lt;p&gt;These additional requirements have to be met:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The attribute expressions have to be of type &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;blaze-markup&#x2F;0.5.1.0&#x2F;doc&#x2F;html&#x2F;Text-Blaze-Internal.html#t:Attribute&quot;&gt;&lt;code&gt;Text.Blaze.Attribute&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;The attribute name expressions have to be of type &lt;code&gt;String&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;The attribute value expressions have to be of a type that is an instance of &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;blaze-markup&#x2F;latest&#x2F;doc&#x2F;html&#x2F;Text-Blaze.html#t:ToValue&quot;&gt;&lt;code&gt;Text.Blaze.ToValue&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; or of type &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;blaze-markup&#x2F;latest&#x2F;doc&#x2F;html&#x2F;Text-Blaze-Internal.html#t:AttributeValue&quot;&gt;&lt;code&gt;Text.Blaze.AttributeValue&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, depending on the &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;template-hsml&#x2F;0.2.0.2&#x2F;doc&#x2F;html&#x2F;Template-HSML.html#t:Options&quot;&gt;template options&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h4 id=&quot;syntax-3&quot;&gt;Syntax&lt;a class=&quot;zola-anchor&quot; href=&quot;#syntax-3&quot; aria-label=&quot;Anchor link for: syntax-3&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;lt;&amp;quot; element_name { attribute } &amp;quot;&amp;gt;&amp;quot; { chunk } &amp;quot;&amp;lt;&#x2F;&amp;quot; element_name &amp;quot;&amp;gt;&amp;quot; 
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h4 id=&quot;example-2&quot;&gt;Example&lt;a class=&quot;zola-anchor&quot; href=&quot;#example-2&quot; aria-label=&quot;Anchor link for: example-2&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;class&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{h|userID|}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Name: {h|userName|}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Age: {h|userAge|}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{h|name|}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;static_value&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;static_name&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{h|value|}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  This div has attribute with dynamic name and an attribute with dynamic value.
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{h|name|}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{h|value|} &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{h|attribute|}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  This div has attribute with dynamic name and value.
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{h|attribute|}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  This div has fully dynamic attribute. This allows for optional attributes.
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;element-leaf&quot;&gt;Element leaf&lt;a class=&quot;zola-anchor&quot; href=&quot;#element-leaf&quot; aria-label=&quot;Anchor link for: element-leaf&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Element leaf is an element that can not contain any other &lt;em&gt;chunks&lt;&#x2F;em&gt;. In &lt;code&gt;HTML&lt;&#x2F;code&gt; it could be for example &lt;code&gt;&amp;lt;br&#x2F;&amp;gt;&lt;&#x2F;code&gt;. Element leafs can also have attributes.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;syntax-4&quot;&gt;Syntax&lt;a class=&quot;zola-anchor&quot; href=&quot;#syntax-4&quot; aria-label=&quot;Anchor link for: syntax-4&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;lt;&amp;quot; element_name { attribute } &amp;quot;&#x2F;&amp;gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h4 id=&quot;example-3&quot;&gt;Example&lt;a class=&quot;zola-anchor&quot; href=&quot;#example-3&quot; aria-label=&quot;Anchor link for: example-3&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Some things are just broken, &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;br&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&#x2F;&amp;gt;
+just like this line.
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;haskell&quot;&gt;Haskell&lt;a class=&quot;zola-anchor&quot; href=&quot;#haskell&quot; aria-label=&quot;Anchor link for: haskell&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;The Haskell &lt;em&gt;chunks&lt;&#x2F;em&gt; in your templates can be either expressions or declarations.&lt;&#x2F;p&gt;
+&lt;p&gt;Declarations are scoped, this means that if you have a declaration inside an &lt;em&gt;element node&lt;&#x2F;em&gt;, it can be used only inside that node (that also includes any nested &lt;em&gt;chunks&lt;&#x2F;em&gt;). Top level declarations (those that are not inside any &lt;em&gt;element node&lt;&#x2F;em&gt;) are visible in the whole template.&lt;&#x2F;p&gt;
+&lt;p&gt;Expressions have to be of a type that is an instance of &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;blaze-markup&#x2F;latest&#x2F;doc&#x2F;html&#x2F;Text-Blaze.html#t:ToMarkup&quot;&gt;&lt;code&gt;Text.Blaze.ToMarkup&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; or of type &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;blaze-markup&#x2F;latest&#x2F;doc&#x2F;html&#x2F;Text-Blaze.html#t:Markup&quot;&gt;&lt;code&gt;Text.Blaze.Markup&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;, depending on the &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;template-hsml&#x2F;0.2.0.2&#x2F;doc&#x2F;html&#x2F;Template-HSML.html#t:Options&quot;&gt;template options&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;syntax-5&quot;&gt;Syntax&lt;a class=&quot;zola-anchor&quot; href=&quot;#syntax-5&quot; aria-label=&quot;Anchor link for: syntax-5&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;{h|&amp;quot; expression | declaration &amp;quot;|}&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h4 id=&quot;example-4&quot;&gt;Example&lt;a class=&quot;zola-anchor&quot; href=&quot;#example-4&quot; aria-label=&quot;Anchor link for: example-4&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{h| omnipresent = &amp;quot;omnipresent&amp;quot; |}
+
+&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  {h| local = &amp;quot;first local&amp;quot; |}
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;{h|omnipresent|}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;{h|local|}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;class&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{h|omnipresent|}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  {h| local = &amp;quot;second local&amp;quot; |}
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;{h|omnipresent|}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;{h|local|}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;argument&quot;&gt;Argument&lt;a class=&quot;zola-anchor&quot; href=&quot;#argument&quot; aria-label=&quot;Anchor link for: argument&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Arguments get translated into fields of the record type, you can optionally specify the type of the field. If you decide to not specify the type, the type will become a parameter of the record type.&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;syntax-6&quot;&gt;Syntax&lt;a class=&quot;zola-anchor&quot; href=&quot;#syntax-6&quot; aria-label=&quot;Anchor link for: syntax-6&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;{a|&amp;quot; &amp;lt;argument name&amp;gt; [ :: &amp;lt;argument type&amp;gt; ] &amp;quot;|}&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h4 id=&quot;example-5&quot;&gt;Example&lt;a class=&quot;zola-anchor&quot; href=&quot;#example-5&quot; aria-label=&quot;Anchor link for: example-5&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{a| name :: String |}
+{a| age :: Int |}
+{a| mystery |}
+
+And the mystery was: {h|mystery|}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;usage&quot;&gt;Usage&lt;a class=&quot;zola-anchor&quot; href=&quot;#usage&quot; aria-label=&quot;Anchor link for: usage&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;If you have come this far, you might be interested in trying out &lt;code&gt;HSML&lt;&#x2F;code&gt;. The &lt;code&gt;Template.HSML&lt;&#x2F;code&gt; module exports all that you need and I recommend you to read the &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;template-hsml&#x2F;0.2.0.2&#x2F;doc&#x2F;html&#x2F;Template-HSML.html&quot;&gt;documentation&lt;&#x2F;a&gt; or ask me to improve it if you happen to find it lacking.&lt;&#x2F;p&gt;
+&lt;p&gt;Often the most efficient way to learn is by example, so here is one:&lt;&#x2F;p&gt;
+&lt;h4 id=&quot;main-hs&quot;&gt;Main.hs&lt;a class=&quot;zola-anchor&quot; href=&quot;#main-hs&quot; aria-label=&quot;Anchor link for: main-hs&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-haskell&quot; data-lang=&quot;haskell&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{-# &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;LANGUAGE&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; TemplateHaskell #-}
+{-# &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;LANGUAGE&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; QuasiQuotes     #-}
+{-# &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;LANGUAGE&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; RecordWildCards #-}
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;------------------------------------------------------------------------------
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Control.Monad
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;------------------------------------------------------------------------------
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Data.Monoid (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;(&amp;lt;&amp;gt;)&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;------------------------------------------------------------------------------
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import qualified &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Text.Blaze.Html5 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;as &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;B
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;------------------------------------------------------------------------------
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Template.HSML
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;------------------------------------------------------------------------------
+
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;data &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;User &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;User
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;    { userID :: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;Int
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, userName :: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;String
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;, userAge :: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;Int
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;    } 
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;hsmlFileWith (defaultOptions &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Default&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;) &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;default_layout.hsml&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;)
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;homeTemplate &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;User&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;-&amp;gt; B&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Markup
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;homeTemplate users = renderTemplate &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;Default
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;    { defaultTitle = &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Home page&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+    , defaultSectionMiddle = middle
+    , defaultSectionFooter = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;[m|&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; &amp;lt;p&amp;gt;Generated by HSML&amp;lt;&#x2F;p&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;    }
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;where
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;      middle = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;[m|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;        &amp;lt;ul class=&amp;quot;users&amp;quot;&amp;gt;
+          {h| forM_ users wrap |}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;        &amp;lt;&#x2F;ul&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;      wrap u = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;[m|&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;lt;li&amp;gt; {h| userTemplate u |} &amp;lt;&#x2F;li&amp;gt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|]
+        
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;userTemplate &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;:: User -&amp;gt; B&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Markup
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;userTemplate &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;User&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{..} = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;[m|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;  &amp;lt;ul class={h| &amp;quot;user-&amp;quot; &amp;lt;&amp;gt; show userID |}&amp;gt;
+    &amp;lt;li&amp;gt;Name: {h|userName|}&amp;lt;&#x2F;li&amp;gt;
+    &amp;lt;li&amp;gt;Age: {h|userAge|}&amp;lt;&#x2F;li&amp;gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;  &amp;lt;&#x2F;ul&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|]
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h4 id=&quot;default-layout-hsml&quot;&gt;default_layout.hsml&lt;a class=&quot;zola-anchor&quot; href=&quot;#default-layout-hsml&quot; aria-label=&quot;Anchor link for: default-layout-hsml&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{a| title :: String |}
+{a| sectionMiddle :: B.Markup |}
+{a| sectionFooter :: B.Markup |}
+
+{h| B.docType |}
+
+&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;html &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;lang&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;en&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;head&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;meta &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;charset&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;utf-8&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&#x2F;&amp;gt;
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;title&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;{h|title|}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;title&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;head&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;body&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;class&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;section middle&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+      {h|sectionMiddle|}
+    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;footer&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+      {h|sectionFooter|}
+    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;footer&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;body&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;html&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And the prettified result of &lt;code&gt;renderMarkup $ homeTemplate [User 1 &amp;quot;Jon Doe&amp;quot; 16, User 2 &amp;quot;Jane Roe&amp;quot; 17]&lt;&#x2F;code&gt; is this:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;lt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;DOCTYPE &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;HTML&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;html &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;lang&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;en&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;head&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;meta &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;charset&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;utf-8&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;title&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Home page&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;title&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;head&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;body&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;class&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;section middle&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;class&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;users&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+        &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;class&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;user-1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Name: Jon Doe&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Age: 16&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+          &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+        &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+        &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;class&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;user-2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;&amp;gt;
+            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Name: Jane Roe&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Age: 17&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+          &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+        &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;li&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+      &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ul&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;div&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+
+    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;footer&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;Generated by HSML&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;p&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;footer&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+  &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;body&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;html&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h2 id=&quot;thoughts&quot;&gt;Thoughts&lt;a class=&quot;zola-anchor&quot; href=&quot;#thoughts&quot; aria-label=&quot;Anchor link for: thoughts&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Currently, nesting &lt;code&gt;HSML&lt;&#x2F;code&gt; within expressions or declarations within &lt;code&gt;HSML&lt;&#x2F;code&gt; (and of course deeper nesting) is not really user-friendly. That’s because neither the embedded Haskell expressions nor declarations can contain Quasi Quotes (as &lt;code&gt;haskell-src-meta&lt;&#x2F;code&gt; does not support that at the moment – there is a pending &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;benmachine&#x2F;haskell-src-meta&#x2F;issues&#x2F;9&quot;&gt;ticket&lt;&#x2F;a&gt; for that). But I think that it should be possible to work around that by transforming &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;haskell-src-exts&#x2F;latest&#x2F;doc&#x2F;html&#x2F;Language-Haskell-Exts-Syntax.html#t:Exp&quot;&gt;&lt;code&gt;QuasiQuote&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; into &lt;a href=&quot;http:&#x2F;&#x2F;hackage.haskell.org&#x2F;packages&#x2F;archive&#x2F;haskell-src-exts&#x2F;latest&#x2F;doc&#x2F;html&#x2F;Language-Haskell-Exts-Syntax.html#t:Exp&quot;&gt;&lt;code&gt;SpliceExp&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; – I will definitely try it out.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;epilogue&quot;&gt;Epilogue&lt;a class=&quot;zola-anchor&quot; href=&quot;#epilogue&quot; aria-label=&quot;Anchor link for: epilogue&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;I hope you liked the article and &lt;code&gt;HSML&lt;&#x2F;code&gt;. There are still few things that remain to be done, like better test coverage, measure the impact on run-time performance, consider using &lt;code&gt;attoparsec&lt;&#x2F;code&gt; instead of &lt;code&gt;parsec&lt;&#x2F;code&gt;, etc.&lt;&#x2F;p&gt;
+&lt;p&gt;If you have any comments or ideas for improvement, I will gladly hear them out.&lt;&#x2F;p&gt;
+</content>
+	</entry>
+</feed>
