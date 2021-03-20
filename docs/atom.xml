@@ -2,17 +2,17 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
 	<title>Palmík</title>
 	<subtitle>Blog about programming, math and more.</subtitle>
-	<link href="http://palmik.net/atom.xml" rel="self" type="application/atom+xml"/>
-  <link href="http://palmik.net"/>
+	<link href="https://palmik.net/atom.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://palmik.net"/>
 	<generator uri="https://www.getzola.org/">Zola</generator>
 	<updated>2021-03-20T00:00:00+00:00</updated>
-	<id>http://palmik.net/atom.xml</id>
+	<id>https://palmik.net/atom.xml</id>
 	<entry xml:lang="en">
 		<title>Conditional Probability, Fast and Slow</title>
 		<published>2021-03-20T00:00:00+00:00</published>
 		<updated>2021-03-20T00:00:00+00:00</updated>
-		<link href="http://palmik.net/conditional-probablity-fast-and-slow/" type="text/html"/>
-		<id>http://palmik.net/conditional-probablity-fast-and-slow/</id>
+		<link href="https://palmik.net/conditional-probablity-fast-and-slow/" type="text/html"/>
+		<id>https://palmik.net/conditional-probablity-fast-and-slow/</id>
 		<content type="html">&lt;p&gt;Now more than ever, we’re bombarded with terms like “sensitivity” or “specificity” in relation to Covid-19 tests. It turns out that to understand these, you first need to understand conditional probability. &lt;&#x2F;p&gt;
 &lt;p&gt;Because common sense intuition can be often misleading, I will walk you through a conditional probablity problem about Blue and Green cabbies from the book &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Thinking,_Fast_and_Slow&quot;&gt;Thinking, Fast and Slow&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
 &lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;hr&#x2F;&gt;
@@ -133,8 +133,8 @@
 		<title>Introducing HSML</title>
 		<published>2012-08-23T00:00:00+00:00</published>
 		<updated>2012-08-23T00:00:00+00:00</updated>
-		<link href="http://palmik.net/introducing-hsml/" type="text/html"/>
-		<id>http://palmik.net/introducing-hsml/</id>
+		<link href="https://palmik.net/introducing-hsml/" type="text/html"/>
+		<id>https://palmik.net/introducing-hsml/</id>
 		<content type="html">&lt;p&gt;&lt;code&gt;HSML&lt;&#x2F;code&gt; (shorthand for &lt;em&gt;Haskell’s Simple Markup Language&lt;&#x2F;em&gt;) is simple markup language with syntax similar to &lt;code&gt;XML&lt;&#x2F;code&gt; and &lt;code&gt;HTML&lt;&#x2F;code&gt;. It allows you to embed Haskell expressions and declarations in your templates.&lt;&#x2F;p&gt;
 &lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
 &lt;p&gt;There are two incarnations of &lt;code&gt;HSML&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;

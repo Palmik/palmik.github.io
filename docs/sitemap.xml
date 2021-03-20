@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>http://palmik.net/</loc>
+        <loc>https://palmik.net/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/about/</loc>
+        <loc>https://palmik.net/about/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/categories/</loc>
+        <loc>https://palmik.net/categories/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/conditional-probablity-fast-and-slow/</loc>
+        <loc>https://palmik.net/conditional-probablity-fast-and-slow/</loc>
         <lastmod>2021-03-20</lastmod>
     </url>
     <url>
-        <loc>http://palmik.net/introducing-hsml/</loc>
+        <loc>https://palmik.net/introducing-hsml/</loc>
         <lastmod>2012-08-23</lastmod>
     </url>
     <url>
-        <loc>http://palmik.net/page/1/</loc>
+        <loc>https://palmik.net/page/1/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/tags/</loc>
+        <loc>https://palmik.net/tags/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/tags/haskell/</loc>
+        <loc>https://palmik.net/tags/haskell/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/tags/math/</loc>
+        <loc>https://palmik.net/tags/math/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/tags/probability/</loc>
+        <loc>https://palmik.net/tags/probability/</loc>
     </url>
     <url>
-        <loc>http://palmik.net/tags/thinking-fast-and-slow/</loc>
+        <loc>https://palmik.net/tags/thinking-fast-and-slow/</loc>
     </url>
 </urlset>
