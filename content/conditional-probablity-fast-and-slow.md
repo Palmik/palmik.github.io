@@ -35,7 +35,7 @@ Let's introduce some useful notation for different "events":
 
 ## Understanding the problem statement
 
-What does it mean that the court tested the reliabilty of the witness? Easy way to think about this is that the court performed 100 tests where they recreated the situation of the accident (like weather and light conditions), in 85 of those tests the cab was Blue and in 15 the cab was Green [1]. This allows the court to compute:
+What does it mean that the court tested the reliabilty of the witness? One way to think about this is that the court performed 100 tests where they recreated the situation of the accident (like weather and light conditions), in 85 of those tests the cab was Blue and in 15 the cab was Green [1]. This allows the court to compute:
 * `P(WB | B)` -- the probability that the witness says the cab was Blue *given that it was really Blue*. In other words, the probability that the witness is right if the culprit is Blue.
 * `P(WB | G)` -- the probability that the witness says the cab was Blue *given that it was really Green*. In other words, the probability that the witness is wrong if the culprit is Green.
 * Similary for `P(WG | G)` and `P(WG | B)`.

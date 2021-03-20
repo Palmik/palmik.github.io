@@ -34,7 +34,7 @@
 &lt;li&gt;&lt;code&gt;WB&lt;&#x2F;code&gt; = &lt;code&gt;!WB&lt;&#x2F;code&gt; = witness testified blue = witness did not testify green&lt;&#x2F;li&gt;
 &lt;&#x2F;ul&gt;
 &lt;h2 id=&quot;understanding-the-problem-statement&quot;&gt;Understanding the problem statement&lt;a class=&quot;zola-anchor&quot; href=&quot;#understanding-the-problem-statement&quot; aria-label=&quot;Anchor link for: understanding-the-problem-statement&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
-&lt;p&gt;What does it mean that the court tested the reliabilty of the witness? Easy way to think about this is that the court performed 100 tests where they recreated the situation of the accident (like weather and light conditions), in 85 of those tests the cab was Blue and in 15 the cab was Green [1]. This allows the court to compute:&lt;&#x2F;p&gt;
+&lt;p&gt;What does it mean that the court tested the reliabilty of the witness? One way to think about this is that the court performed 100 tests where they recreated the situation of the accident (like weather and light conditions), in 85 of those tests the cab was Blue and in 15 the cab was Green [1]. This allows the court to compute:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;P(WB | B)&lt;&#x2F;code&gt; – the probability that the witness says the cab was Blue &lt;em&gt;given that it was really Blue&lt;&#x2F;em&gt;. In other words, the probability that the witness is right if the culprit is Blue.&lt;&#x2F;li&gt;
 &lt;li&gt;&lt;code&gt;P(WB | G)&lt;&#x2F;code&gt; – the probability that the witness says the cab was Blue &lt;em&gt;given that it was really Green&lt;&#x2F;em&gt;. In other words, the probability that the witness is wrong if the culprit is Green.&lt;&#x2F;li&gt;
