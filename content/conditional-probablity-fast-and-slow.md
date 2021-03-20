@@ -79,7 +79,7 @@ Based on (1), to compute `P(B | WB)` we need to know `P(B and WB)` and `P(WB)`.
 
 To compute `P(B and WB)` we use (2). We already know `P(WB | B)` and `P(B)`, so we simply substitute: `P(WB | B) * P(B) = 0.8 * 0.15`.
 
-To compute `P(WB)` we need to consider when `WB` can occur (i.e. the witness says that the car is Blue)? Either:
+To compute `P(WB)` we need to consider when `WB` can occur (i.e. the witness says that the car is Blue). Either:
 
 * The car is Blue and the witness is right: `P(B) * P(WB | B)` = `0.15 * 0.8`
 * The car is Green and the witness is wrong: `P(B) * P(WB | G)` = `0.15 * 0.2`

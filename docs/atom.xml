@@ -71,7 +71,7 @@
 &lt;&#x2F;ol&gt;
 &lt;p&gt;Based on (1), to compute &lt;code&gt;P(B | WB)&lt;&#x2F;code&gt; we need to know &lt;code&gt;P(B and WB)&lt;&#x2F;code&gt; and &lt;code&gt;P(WB)&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
 &lt;p&gt;To compute &lt;code&gt;P(B and WB)&lt;&#x2F;code&gt; we use (2). We already know &lt;code&gt;P(WB | B)&lt;&#x2F;code&gt; and &lt;code&gt;P(B)&lt;&#x2F;code&gt;, so we simply substitute: &lt;code&gt;P(WB | B) * P(B) = 0.8 * 0.15&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
-&lt;p&gt;To compute &lt;code&gt;P(WB)&lt;&#x2F;code&gt; we need to consider when &lt;code&gt;WB&lt;&#x2F;code&gt; can occur (i.e. the witness says that the car is Blue)? Either:&lt;&#x2F;p&gt;
+&lt;p&gt;To compute &lt;code&gt;P(WB)&lt;&#x2F;code&gt; we need to consider when &lt;code&gt;WB&lt;&#x2F;code&gt; can occur (i.e. the witness says that the car is Blue). Either:&lt;&#x2F;p&gt;
 &lt;ul&gt;
 &lt;li&gt;The car is Blue and the witness is right: &lt;code&gt;P(B) * P(WB | B)&lt;&#x2F;code&gt; = &lt;code&gt;0.15 * 0.8&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
 &lt;li&gt;The car is Green and the witness is wrong: &lt;code&gt;P(B) * P(WB | G)&lt;&#x2F;code&gt; = &lt;code&gt;0.15 * 0.2&lt;&#x2F;code&gt;&lt;&#x2F;li&gt;
