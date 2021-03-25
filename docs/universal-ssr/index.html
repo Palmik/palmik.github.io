@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+
+    <title>Universal server-side rendering for better SEO</title>
+    <meta name="description" content="Blog about programming, math and more.">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌴</text></svg>">
+    <link rel="stylesheet" href="https:&#x2F;&#x2F;palmik.net&#x2F;main.css">
+
+    
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="https://palmik.net/atom.xml">
+    
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LPWX53MGDL"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-LPWX53MGDL');
+    </script>
+
+    
+    
+</head>
+<body>
+    <a class="skip-main" href="#main">Skip to content</a>
+    <div class="container">
+        <header> 
+            <h1 class="site-header">
+                <a href="https:&#x2F;&#x2F;palmik.net">Palmík</a>
+            </h1>
+            <nav>
+                
+                
+                
+                <a  href="https:&#x2F;&#x2F;palmik.net&#x2F;tags">Tags</a>
+                
+                
+            </nav>
+        </header>
+        <main id="main" tabindex="-1">
+            
+
+<article class="post">
+  <header>
+    <h1>Universal server-side rendering for better SEO</h1>
+  </header>
+  
+    
+      <div class="article-info">
+          <div class="article-date">26 March 2021</div>
+      </div>
+    
+
+  <div class="content"><p>Universal approach to <em>server-side rendering (SSR)</em> for sites that rely on JavaScript for client-side rendering.</p>
+<span id="continue-reading"></span><hr/>
+<h2 id="why-server-side-rendering">Why server-side rendering?<a class="zola-anchor" href="#why-server-side-rendering" aria-label="Anchor link for: why-server-side-rendering">🔗</a></h2>
+<p>In short, client-side rendered pages pose a difficulty for search engines. This can harm the discoverability and ranking of your site on search engines. Checkout <a href="/client-side-rendering-seo"><strong>How client-side rendering hinders SEO</strong></a> to learn more.</p>
+<h2 id="server-side-rendering-approaches">Server-side rendering approaches<a class="zola-anchor" href="#server-side-rendering-approaches" aria-label="Anchor link for: server-side-rendering-approaches">🔗</a></h2>
+<p>Many popular frontend JavaScript frameworks come with their own ways of implementing server ide rendering:</p>
+<ul>
+<li><a href="https://reactjs.org">React</a> comes with <a href="https://reactjs.org/docs/react-dom-server.html">ReactDOMServer</a>.</li>
+<li><a href="https://vuejs.org">Vue</a> comes with <a href="https://ssr.vuejs.org">vue-server-renderer</a>.</li>
+<li><a href="https://angular.io">Angular</a> comes with <a href="https://angular.io/guide/universal">Angular Universal</a>.</li>
+</ul>
+<p>If you are using one of these frameworks, it might be worth investigating these approaches instead of the universal approach I am going to present here.</p>
+<p>Advantages of the universal approach:</p>
+<ul>
+<li>Works with any site, regardless of framework.</li>
+<li>Does not require rewriting your code to work in Node (getting rid of <code>document</code>, <code>window</code>, etc.).</li>
+</ul>
+<p>Disadvantages of the universal approach:</p>
+<ul>
+<li>More resource intensive and potentially higher latency.</li>
+<li>No implicit support for <a href="https://en.wikipedia.org/wiki/Hydration_(web_development)">hydration</a>, this means that you are going to lose interactivity and as such <em>it’s in most cases only useful for search engine crawlers, not for regular users of your website</em>.</li>
+</ul>
+<h2 id="using-prerender-for-universal-server-side-rendering">Using Prerender for universal server-side rendering<a class="zola-anchor" href="#using-prerender-for-universal-server-side-rendering" aria-label="Anchor link for: using-prerender-for-universal-server-side-rendering">🔗</a></h2>
+<p><a href="https://github.com/prerender/prerender"><em>Prerender</em></a> is a Node server that uses headless Chrome to render websites, much like search engines <a href="http://nginx.org/en/docs/beginners_guide.html">such as Google</a>.
+For our set-up we will use <a href="https://www.nginx.com">Nginx</a> as a reverse proxy and <a href="https://docs.docker.com/compose/">docker-compose</a> to tie it all together.</p>
+<h3 id="nginx-set-up">Nginx set-up<a class="zola-anchor" href="#nginx-set-up" aria-label="Anchor link for: nginx-set-up">🔗</a></h3>
+<p>How does it work?</p>
+<ol>
+<li>Inspect the request and decide whether we want to prerender the response
+<ul>
+<li>This logic is based mostly on the <code>User-Agent</code> request header.</li>
+</ul>
+</li>
+<li><em>If prerender</em>: Pass the request to the “prerender” service, which proxies it to the “server” service.</li>
+<li><em>If not prerender</em>: Pass the request directly to the “server” service.</li>
+</ol>
+<p>The Nginx config assumes that the Prerender service is running at <code>http://prerender:3000</code> and that your website’s server (that you want to enable server-side rendering for) is running at <code>http://server:10080</code>.</p>
+<pre style="background-color:#2b303b;">
+<code class="language-conf" data-lang="conf"><span style="color:#b48ead;">events </span><span style="color:#c0c5ce;">{
+}
+
+</span><span style="color:#b48ead;">http </span><span style="color:#c0c5ce;">{
+  # Handle </span><span style="color:#d08770;">http://example.com
+</span><span style="color:#c0c5ce;">  # - Prerender for scrapers
+</span><span style="color:#b48ead;">  server </span><span style="color:#c0c5ce;">{
+      </span><span style="color:#bf616a;">listen </span><span style="color:#d08770;">80</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">server_name </span><span style="color:#c0c5ce;">example.com;
+
+</span><span style="color:#b48ead;">      location </span><span style="color:#c0c5ce;">/ {
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">Host </span><span style="color:#b48ead;">$host</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">X-Real-IP </span><span style="color:#b48ead;">$remote_addr</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">X-Forwarded-For </span><span style="color:#b48ead;">$proxy_add_x_forwarded_for</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">X-Forwarded-Proto </span><span style="color:#b48ead;">$scheme</span><span style="color:#c0c5ce;">;
+
+          # Logic that decides whether we should use pre-render or not.
+          # It is based mainly </span><span style="color:#d08770;">on</span><span style="color:#c0c5ce;"> the user agent, as shown here:
+          </span><span style="color:#65737e;"># https://gist.github.com/thoop/8165802
+
+          </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+          # Prerender for bot user agents.
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$http_user_agent </span><span style="color:#c0c5ce;">~* </span><span style="color:#a3be8c;">&quot;googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest\/0\.|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">;
+          }
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$args </span><span style="color:#c0c5ce;">~ </span><span style="color:#a3be8c;">&quot;_escaped_fragment_&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">;
+          }
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$http_user_agent </span><span style="color:#c0c5ce;">~ </span><span style="color:#a3be8c;">&quot;Prerender&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+          }
+          # Do not prerender for plain resources.
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$uri </span><span style="color:#c0c5ce;">~* </span><span style="color:#a3be8c;">&quot;\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|doc|txt|ico|rss|zip|mp3|rar|exe|wmv|doc|avi|ppt|mpg|mpeg|tif|wav|mov|psd|ai|xls|mp4|m4a|swf|dat|dmg|iso|flv|m4v|torrent|ttf|woff|svg|eot)&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+          }
+         
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$prerender </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">) {
+</span><span style="color:#b48ead;">              rewrite </span><span style="color:#c0c5ce;">.* /</span><span style="color:#d08770;">http://server:10080$request_uri</span><span style="color:#c0c5ce;">? break;
+              </span><span style="color:#bf616a;">proxy_pass </span><span style="color:#d08770;">http://prerender:3000</span><span style="color:#c0c5ce;">;
+          }
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$prerender </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">proxy_pass </span><span style="color:#d08770;">http://server:10080</span><span style="color:#c0c5ce;">;
+          }
+      }
+  }
+}
+</span></code></pre>
+<p>In most cases, you will want to also handle HTTPS traffic. For that, refer to <a href="/https-nginx">Handling HTTPS with Nginx</a>.
+Here’s what a config that does both prerendering as well as HTTPS handling could look like:</p>
+<pre style="background-color:#2b303b;">
+<code class="language-conf" data-lang="conf"><span style="color:#b48ead;">events </span><span style="color:#c0c5ce;">{
+}
+
+</span><span style="color:#b48ead;">http </span><span style="color:#c0c5ce;">{
+  # Handle </span><span style="color:#d08770;">https://example.com
+</span><span style="color:#c0c5ce;">  #
+  # - SSL
+  # - Prerender for scrapers
+</span><span style="color:#b48ead;">  server </span><span style="color:#c0c5ce;">{
+      </span><span style="color:#bf616a;">listen </span><span style="color:#d08770;">443</span><span style="color:#c0c5ce;"> ssl;
+      </span><span style="color:#bf616a;">server_name </span><span style="color:#c0c5ce;">example.com;
+
+      </span><span style="color:#bf616a;">ssl_certificate </span><span style="color:#c0c5ce;">/etc/letsencrypt/live/example.com/fullchain.pem;
+      </span><span style="color:#bf616a;">ssl_certificate_key </span><span style="color:#c0c5ce;">/etc/letsencrypt/live/example.com/privkey.pem;
+
+      </span><span style="color:#bf616a;">ssl_session_timeout </span><span style="color:#d08770;">1d</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_session_cache </span><span style="color:#c0c5ce;">builtin:</span><span style="color:#d08770;">100</span><span style="color:#c0c5ce;"> shared:SSL:</span><span style="color:#d08770;">10m</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_protocols </span><span style="color:#c0c5ce;">TLSv1 TLSv1.</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;"> TLSv1.</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;"> TLSv1.</span><span style="color:#d08770;">3</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_ciphers </span><span style="color:#a3be8c;">&#39;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256&#39;</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_prefer_server_ciphers </span><span style="color:#d08770;">on</span><span style="color:#c0c5ce;">;
+
+</span><span style="color:#b48ead;">      location </span><span style="color:#c0c5ce;">/ {
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">Host </span><span style="color:#b48ead;">$host</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">X-Real-IP </span><span style="color:#b48ead;">$remote_addr</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">X-Forwarded-For </span><span style="color:#b48ead;">$proxy_add_x_forwarded_for</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">proxy_set_header        </span><span style="color:#c0c5ce;">X-Forwarded-Proto </span><span style="color:#b48ead;">$scheme</span><span style="color:#c0c5ce;">;
+
+          </span><span style="color:#bf616a;">add_header </span><span style="color:#c0c5ce;">Content-Security-Policy </span><span style="color:#a3be8c;">&quot;default-src &#39;none&#39;;connect-src &#39;self&#39; www.google-analytics.com;manifest-src &#39;self&#39;;style-src &#39;self&#39;;script-src &#39;self&#39; www.googletagmanager.com;img-src &#39;self&#39; www.googletagmanager.com;frame-ancestors &#39;self&#39;;base-uri &#39;none&#39;;&quot;</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">add_header </span><span style="color:#c0c5ce;">Strict-Transport-Security </span><span style="color:#a3be8c;">&quot;max-age=15768000; includeSubdomains; preload&quot;</span><span style="color:#c0c5ce;">;
+          </span><span style="color:#bf616a;">add_header </span><span style="color:#c0c5ce;">X-Content-Type-Options nosniff;
+          </span><span style="color:#bf616a;">add_header </span><span style="color:#c0c5ce;">X-Frame-Options SAMEORIGIN;
+          </span><span style="color:#bf616a;">add_header </span><span style="color:#c0c5ce;">X-XSS-Protection </span><span style="color:#a3be8c;">&quot;1; mode=block&quot;</span><span style="color:#c0c5ce;">;
+
+          </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$http_user_agent </span><span style="color:#c0c5ce;">~* </span><span style="color:#a3be8c;">&quot;googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest\/0\.|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">;
+          }
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$args </span><span style="color:#c0c5ce;">~ </span><span style="color:#a3be8c;">&quot;_escaped_fragment_&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">;
+          }
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$http_user_agent </span><span style="color:#c0c5ce;">~ </span><span style="color:#a3be8c;">&quot;Prerender&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+          }
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$uri </span><span style="color:#c0c5ce;">~* </span><span style="color:#a3be8c;">&quot;\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|doc|txt|ico|rss|zip|mp3|rar|exe|wmv|doc|avi|ppt|mpg|mpeg|tif|wav|mov|psd|ai|xls|mp4|m4a|swf|dat|dmg|iso|flv|m4v|torrent|ttf|woff|svg|eot)&quot;</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">set </span><span style="color:#b48ead;">$prerender </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">;
+          }
+          
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$prerender </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">) {
+</span><span style="color:#b48ead;">              rewrite </span><span style="color:#c0c5ce;">.* /</span><span style="color:#d08770;">http://server:10080$request_uri</span><span style="color:#c0c5ce;">? break;
+              </span><span style="color:#bf616a;">proxy_pass </span><span style="color:#d08770;">http://prerender:3000</span><span style="color:#c0c5ce;">;
+          }
+</span><span style="color:#b48ead;">          if</span><span style="color:#c0c5ce;"> (</span><span style="color:#b48ead;">$prerender </span><span style="color:#c0c5ce;">= </span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">) {
+              </span><span style="color:#bf616a;">proxy_pass </span><span style="color:#d08770;">http://server:10080</span><span style="color:#c0c5ce;">;
+          }
+      }
+  }
+  
+  # Redirect </span><span style="color:#d08770;">http://example.com</span><span style="color:#c0c5ce;"> and </span><span style="color:#d08770;">http://www.example.com</span><span style="color:#c0c5ce;"> to </span><span style="color:#d08770;">https://example.com
+</span><span style="color:#b48ead;">  server </span><span style="color:#c0c5ce;">{
+      </span><span style="color:#bf616a;">listen </span><span style="color:#d08770;">80</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">server_name </span><span style="color:#c0c5ce;">www.example.com example.com;
+      </span><span style="color:#bf616a;">return </span><span style="color:#d08770;">301 https://example.com$request_uri</span><span style="color:#c0c5ce;">;
+  }
+
+  # Redirect </span><span style="color:#d08770;">https://www.example.com</span><span style="color:#c0c5ce;"> to </span><span style="color:#d08770;">https://example.com
+</span><span style="color:#b48ead;">  server </span><span style="color:#c0c5ce;">{
+      </span><span style="color:#bf616a;">listen </span><span style="color:#d08770;">443</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">server_name </span><span style="color:#c0c5ce;">www.example.com;
+      
+      </span><span style="color:#bf616a;">ssl_certificate </span><span style="color:#c0c5ce;">/etc/letsencrypt/live/example.com/fullchain.pem;
+      </span><span style="color:#bf616a;">ssl_certificate_key </span><span style="color:#c0c5ce;">/etc/letsencrypt/live/example.com/privkey.pem;
+
+      </span><span style="color:#bf616a;">ssl_session_timeout </span><span style="color:#d08770;">1d</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_session_cache </span><span style="color:#c0c5ce;">builtin:</span><span style="color:#d08770;">100</span><span style="color:#c0c5ce;"> shared:SSL:</span><span style="color:#d08770;">10m</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_protocols </span><span style="color:#c0c5ce;">TLSv1 TLSv1.</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;"> TLSv1.</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;"> TLSv1.</span><span style="color:#d08770;">3</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_ciphers </span><span style="color:#a3be8c;">&#39;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256&#39;</span><span style="color:#c0c5ce;">;
+      </span><span style="color:#bf616a;">ssl_prefer_server_ciphers </span><span style="color:#d08770;">on</span><span style="color:#c0c5ce;">;
+      
+      </span><span style="color:#bf616a;">return </span><span style="color:#d08770;">301 https://example.com$request_uri</span><span style="color:#c0c5ce;">;
+  }
+}
+</span></code></pre><h3 id="docker-compose-set-up">Docker-compose set-up<a class="zola-anchor" href="#docker-compose-set-up" aria-label="Anchor link for: docker-compose-set-up">🔗</a></h3>
+<p>We use <code>docker-compose</code> to tie it all together. It runs the Nginx service, the Prerender service and optionally also the server you want server-side rendering for: </p>
+<pre style="background-color:#2b303b;">
+<code class="language-yaml" data-lang="yaml"><span style="color:#bf616a;">version</span><span style="color:#c0c5ce;">: &quot;</span><span style="color:#a3be8c;">3.7</span><span style="color:#c0c5ce;">&quot;
+</span><span style="color:#bf616a;">services</span><span style="color:#c0c5ce;">:
+  </span><span style="color:#65737e;"># You would put the service for your website&#39;s server here.
+  # If you do not use Docker for your website&#39;s server, you should remove this. 
+  </span><span style="color:#bf616a;">server</span><span style="color:#c0c5ce;">:
+    </span><span style="color:#65737e;"># We assume that the &quot;server&quot; service is internally exposed at the port 10080.
+    </span><span style="color:#bf616a;">expose</span><span style="color:#c0c5ce;">:
+      - &quot;</span><span style="color:#a3be8c;">10080</span><span style="color:#c0c5ce;">&quot;
+  </span><span style="color:#bf616a;">nginx</span><span style="color:#c0c5ce;">:
+    </span><span style="color:#bf616a;">image</span><span style="color:#c0c5ce;">: </span><span style="color:#bf616a;">nginx:latest
+    volumes</span><span style="color:#c0c5ce;">:
+      </span><span style="color:#65737e;"># This should be the location of the nginx.conf above.
+      </span><span style="color:#c0c5ce;">- </span><span style="color:#a3be8c;">./nginx.conf:/etc/nginx/nginx.conf
+      </span><span style="color:#65737e;"># This assumes you use Let&#39;s Encrypt for your SSL certificate.
+      </span><span style="color:#c0c5ce;">- </span><span style="color:#bf616a;">/etc/letsencrypt/:/etc/letsencrypt
+    ports</span><span style="color:#c0c5ce;">:
+      </span><span style="color:#65737e;"># The Nginx server is exposed at port 80 and 443 for HTTP and HTTPS traffic respectively.
+      </span><span style="color:#c0c5ce;">- &quot;</span><span style="color:#a3be8c;">80:80</span><span style="color:#c0c5ce;">&quot;
+      - &quot;</span><span style="color:#a3be8c;">443:443</span><span style="color:#c0c5ce;">&quot;
+    </span><span style="color:#bf616a;">links</span><span style="color:#c0c5ce;">:
+      </span><span style="color:#65737e;"># Remove this if you do not use the &quot;server&quot; service for your website&#39;s server. 
+      </span><span style="color:#c0c5ce;">- &quot;</span><span style="color:#a3be8c;">server</span><span style="color:#c0c5ce;">&quot;
+    </span><span style="color:#65737e;"># This allows you to connect to localhost of the host machine.
+    # Only needed if your website&#39;s server runs outside of this docker-compose
+    # (i.e. you do not use the &quot;server&quot; service above).
+    </span><span style="color:#bf616a;">extra_hosts</span><span style="color:#c0c5ce;">:
+      - &quot;</span><span style="color:#a3be8c;">host.docker.internal:host-gateway</span><span style="color:#c0c5ce;">&quot;
+  </span><span style="color:#bf616a;">prerender</span><span style="color:#c0c5ce;">:
+    </span><span style="color:#bf616a;">image</span><span style="color:#c0c5ce;">: </span><span style="color:#bf616a;">tvanro/prerender-alpine:latest
+    environment</span><span style="color:#c0c5ce;">:
+      </span><span style="color:#bf616a;">MEMORY_CACHE</span><span style="color:#c0c5ce;">: </span><span style="color:#d08770;">0
+      </span><span style="color:#bf616a;">CACHE_MAXSIZE</span><span style="color:#c0c5ce;">: </span><span style="color:#d08770;">0
+    </span><span style="color:#bf616a;">expose</span><span style="color:#c0c5ce;">:
+      - &quot;</span><span style="color:#a3be8c;">3000</span><span style="color:#c0c5ce;">&quot;
+    </span><span style="color:#65737e;"># This allows you to connect to localhost of the host machine.
+    # Only needed if your website&#39;s server runs outside of this docker-compose
+    # (i.e. you do not use the &quot;server&quot; service above).
+    </span><span style="color:#bf616a;">extra_hosts</span><span style="color:#c0c5ce;">:
+      - &quot;</span><span style="color:#a3be8c;">host.docker.internal:host-gateway</span><span style="color:#c0c5ce;">&quot;
+</span></code></pre>
+<p>If you do not want to use Docker for your website’s server that’s fine. Assuming it’s running on the localhost of your host machine, e.g. <code>http://localhost:10080</code>, you have several options, but the easiest would be changing <code>http://server:10080</code> in <code>nginx.conf</code> to <code>http://host.docker.internal:10080</code>.</p>
+<p>You can configure the prerender service using environment variables. In the above, I disabled caching because in my case it’s unlikely that the same page will be retrived by crawlers more than once in a short period of time. See the documentation of <a href="https://github.com/tvanro/prerender-alpine">the Docker image</a> for details.</p>
+<p>Now you can simply run <code>docker-compose up</code> to start up all the necessary services.</p>
+<h2 id="resources">Resources<a class="zola-anchor" href="#resources" aria-label="Anchor link for: resources">🔗</a></h2>
+<ul>
+<li><a href="http://nginx.org/en/docs/beginners_guide.html">Nginx guide</a></li>
+<li><a href="https://docs.docker.com/get-started/">Docker guide</a></li>
+<li><a href="https://docs.docker.com/compose/gettingstarted/">Docker-compose guide</a></li>
+</ul>
+</div>
+  
+    <div class="article-info">
+      <div class="article-taxonomies">
+          
+          
+              <ul class="article-tags">
+                  
+                  <li><a href="https://palmik.net/tags/seo/">#SEO</a></li>
+                  
+                  <li><a href="https://palmik.net/tags/spa/">#SPA</a></li>
+                  
+                  <li><a href="https://palmik.net/tags/ssr/">#SSR</a></li>
+                  
+                  <li><a href="https://palmik.net/tags/javascript/">#JavaScript</a></li>
+                  
+                  <li><a href="https://palmik.net/tags/nginx/">#Nginx</a></li>
+                  
+                  <li><a href="https://palmik.net/tags/docker/">#Docker</a></li>
+                  
+                  <li><a href="https://palmik.net/tags/docker-compose/">#Docker compose</a></li>
+                  
+              </ul>
+          
+      </div>
+    </div>
+
+</article>
+
+
+        </main>
+        <footer>
+            <p>
+                © Palmík 2021<br>
+            </p>
+            <p>
+                
+                
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
