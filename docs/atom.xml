@@ -5,8 +5,467 @@
 	<link href="https://palmik.net/atom.xml" rel="self" type="application/atom+xml"/>
   <link href="https://palmik.net"/>
 	<generator uri="https://www.getzola.org/">Zola</generator>
-	<updated>2021-03-20T00:00:00+00:00</updated>
+	<updated>2021-03-26T16:00:00+00:00</updated>
 	<id>https://palmik.net/atom.xml</id>
+	<entry xml:lang="en">
+		<title>Universal server-side rendering for better SEO</title>
+		<published>2021-03-26T16:00:00+00:00</published>
+		<updated>2021-03-26T16:00:00+00:00</updated>
+		<link href="https://palmik.net/universal-ssr/" type="text/html"/>
+		<id>https://palmik.net/universal-ssr/</id>
+		<content type="html">&lt;p&gt;Universal approach to &lt;em&gt;server-side rendering (SSR)&lt;&#x2F;em&gt; for sites that rely on JavaScript for client-side rendering.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;hr&#x2F;&gt;
+&lt;h2 id=&quot;why-server-side-rendering&quot;&gt;Why server-side rendering?&lt;a class=&quot;zola-anchor&quot; href=&quot;#why-server-side-rendering&quot; aria-label=&quot;Anchor link for: why-server-side-rendering&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;In short, client-side rendered pages pose a difficulty for search engines. This can harm the discoverability and ranking of your site on search engines. Checkout &lt;a href=&quot;&#x2F;client-side-rendering-seo&quot;&gt;&lt;strong&gt;How client-side rendering hinders SEO&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; to learn more.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;server-side-rendering-approaches&quot;&gt;Server-side rendering approaches&lt;a class=&quot;zola-anchor&quot; href=&quot;#server-side-rendering-approaches&quot; aria-label=&quot;Anchor link for: server-side-rendering-approaches&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Many popular frontend JavaScript frameworks come with their own ways of implementing server ide rendering:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;reactjs.org&quot;&gt;React&lt;&#x2F;a&gt; comes with &lt;a href=&quot;https:&#x2F;&#x2F;reactjs.org&#x2F;docs&#x2F;react-dom-server.html&quot;&gt;ReactDOMServer&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;vuejs.org&quot;&gt;Vue&lt;&#x2F;a&gt; comes with &lt;a href=&quot;https:&#x2F;&#x2F;ssr.vuejs.org&quot;&gt;vue-server-renderer&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;angular.io&quot;&gt;Angular&lt;&#x2F;a&gt; comes with &lt;a href=&quot;https:&#x2F;&#x2F;angular.io&#x2F;guide&#x2F;universal&quot;&gt;Angular Universal&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;If you are using one of these frameworks, it might be worth investigating these approaches instead of the universal approach I am going to present here.&lt;&#x2F;p&gt;
+&lt;p&gt;Advantages of the universal approach:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Works with any site, regardless of framework.&lt;&#x2F;li&gt;
+&lt;li&gt;Does not require rewriting your code to work in Node (getting rid of &lt;code&gt;document&lt;&#x2F;code&gt;, &lt;code&gt;window&lt;&#x2F;code&gt;, etc.).&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Disadvantages of the universal approach:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;More resource intensive and potentially higher latency.&lt;&#x2F;li&gt;
+&lt;li&gt;No implicit support for &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Hydration_(web_development)&quot;&gt;hydration&lt;&#x2F;a&gt;, this means that you are going to lose interactivity and as such &lt;em&gt;it’s in most cases only useful for search engine crawlers, not for regular users of your website&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;using-prerender-for-universal-server-side-rendering&quot;&gt;Using Prerender for universal server-side rendering&lt;a class=&quot;zola-anchor&quot; href=&quot;#using-prerender-for-universal-server-side-rendering&quot; aria-label=&quot;Anchor link for: using-prerender-for-universal-server-side-rendering&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;prerender&#x2F;prerender&quot;&gt;&lt;em&gt;Prerender&lt;&#x2F;em&gt;&lt;&#x2F;a&gt; is a Node server that uses headless Chrome to render websites, much like search engines &lt;a href=&quot;http:&#x2F;&#x2F;nginx.org&#x2F;en&#x2F;docs&#x2F;beginners_guide.html&quot;&gt;such as Google&lt;&#x2F;a&gt;.
+For our set-up we will use &lt;a href=&quot;https:&#x2F;&#x2F;www.nginx.com&quot;&gt;Nginx&lt;&#x2F;a&gt; as a reverse proxy and &lt;a href=&quot;https:&#x2F;&#x2F;docs.docker.com&#x2F;compose&#x2F;&quot;&gt;docker-compose&lt;&#x2F;a&gt; to tie it all together.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;nginx-set-up&quot;&gt;Nginx set-up&lt;a class=&quot;zola-anchor&quot; href=&quot;#nginx-set-up&quot; aria-label=&quot;Anchor link for: nginx-set-up&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;How does it work?&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Inspect the request and decide whether we want to prerender the response
+&lt;ul&gt;
+&lt;li&gt;This logic is based mostly on the &lt;code&gt;User-Agent&lt;&#x2F;code&gt; request header.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;em&gt;If prerender&lt;&#x2F;em&gt;: Pass the request to the “prerender” service, which proxies it to the “server” service.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;em&gt;If not prerender&lt;&#x2F;em&gt;: Pass the request directly to the “server” service.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;The Nginx config assumes that the Prerender service is running at &lt;code&gt;http:&#x2F;&#x2F;prerender:3000&lt;&#x2F;code&gt; and that your website’s server (that you want to enable server-side rendering for) is running at &lt;code&gt;http:&#x2F;&#x2F;server:10080&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;events &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+}
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;http &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+  # Handle &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;example.com
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;  # - Prerender for scrapers
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;  server &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;listen &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;80&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;server_name &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;example.com;
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;      location &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&#x2F; {
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Host &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$host&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Real-IP &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$remote_addr&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Forwarded-For &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$proxy_add_x_forwarded_for&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Forwarded-Proto &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$scheme&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+
+          # Logic that decides whether we should use pre-render or not.
+          # It is based mainly &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;on&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; the user agent, as shown here:
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# https:&#x2F;&#x2F;gist.github.com&#x2F;thoop&#x2F;8165802
+
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          # Prerender for bot user agents.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$http_user_agent &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest\&#x2F;0\.|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$args &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;_escaped_fragment_&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$http_user_agent &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;Prerender&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+          # Do not prerender for plain resources.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$uri &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|doc|txt|ico|rss|zip|mp3|rar|exe|wmv|doc|avi|ppt|mpg|mpeg|tif|wav|mov|psd|ai|xls|mp4|m4a|swf|dat|dmg|iso|flv|m4v|torrent|ttf|woff|svg|eot)&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+         
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;              rewrite &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;.* &#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;server:10080$request_uri&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;? break;
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_pass &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;prerender:3000&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_pass &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;server:10080&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+      }
+  }
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In most cases, you will want to also handle HTTPS traffic. For that, refer to &lt;a href=&quot;&#x2F;https-nginx&quot;&gt;Handling HTTPS with Nginx&lt;&#x2F;a&gt;.
+Here’s what a config that does both prerendering as well as HTTPS handling could look like:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-conf&quot; data-lang=&quot;conf&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;events &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+}
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;http &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+  # Handle &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;https:&#x2F;&#x2F;example.com
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;  #
+  # - SSL
+  # - Prerender for scrapers
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;  server &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;listen &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;443&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; ssl;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;server_name &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;example.com;
+
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_certificate &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;fullchain.pem;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_certificate_key &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;privkey.pem;
+
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_session_timeout &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1d&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_session_cache &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;builtin:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;100&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; shared:SSL:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;10m&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_protocols &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;TLSv1 TLSv1.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; TLSv1.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; TLSv1.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_ciphers &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_prefer_server_ciphers &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;on&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;      location &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&#x2F; {
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Host &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$host&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Real-IP &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$remote_addr&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Forwarded-For &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$proxy_add_x_forwarded_for&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_set_header        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Forwarded-Proto &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$scheme&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;add_header &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Content-Security-Policy &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;default-src &amp;#39;none&amp;#39;;connect-src &amp;#39;self&amp;#39; www.google-analytics.com;manifest-src &amp;#39;self&amp;#39;;style-src &amp;#39;self&amp;#39;;script-src &amp;#39;self&amp;#39; www.googletagmanager.com;img-src &amp;#39;self&amp;#39; www.googletagmanager.com;frame-ancestors &amp;#39;self&amp;#39;;base-uri &amp;#39;none&amp;#39;;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;add_header &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;Strict-Transport-Security &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;max-age=15768000; includeSubdomains; preload&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;add_header &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Content-Type-Options nosniff;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;add_header &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-Frame-Options SAMEORIGIN;
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;add_header &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;X-XSS-Protection &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;1; mode=block&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+
+          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$http_user_agent &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;googlebot|bingbot|yandex|baiduspider|twitterbot|facebookexternalhit|rogerbot|linkedinbot|embedly|quora link preview|showyoubot|outbrain|pinterest\&#x2F;0\.|pinterestbot|slackbot|vkShare|W3C_Validator|whatsapp&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$args &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;_escaped_fragment_&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$http_user_agent &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;Prerender&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$uri &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;~* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;quot;\.(js|css|xml|less|png|jpg|jpeg|gif|pdf|doc|txt|ico|rss|zip|mp3|rar|exe|wmv|doc|avi|ppt|mpg|mpeg|tif|wav|mov|psd|ai|xls|mp4|m4a|swf|dat|dmg|iso|flv|m4v|torrent|ttf|woff|svg|eot)&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;set &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+          
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;              rewrite &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;.* &#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;server:10080$request_uri&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;? break;
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_pass &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;prerender:3000&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;          if&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;$prerender &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;) {
+              &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;proxy_pass &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;server:10080&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+          }
+      }
+  }
+  
+  # Redirect &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;example.com&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; and &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;http:&#x2F;&#x2F;www.example.com&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; to &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;https:&#x2F;&#x2F;example.com
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;  server &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;listen &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;80&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;server_name &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;www.example.com example.com;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;301 https:&#x2F;&#x2F;example.com$request_uri&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+  }
+
+  # Redirect &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;https:&#x2F;&#x2F;www.example.com&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; to &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;https:&#x2F;&#x2F;example.com
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;  server &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;listen &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;443&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;server_name &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;www.example.com;
+      
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_certificate &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;fullchain.pem;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_certificate_key &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;privkey.pem;
+
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_session_timeout &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1d&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_session_cache &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;builtin:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;100&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; shared:SSL:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;10m&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_protocols &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;TLSv1 TLSv1.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; TLSv1.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; TLSv1.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_ciphers &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ssl_prefer_server_ciphers &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;on&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+      
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;301 https:&#x2F;&#x2F;example.com$request_uri&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;;
+  }
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;docker-compose-set-up&quot;&gt;Docker-compose set-up&lt;a class=&quot;zola-anchor&quot; href=&quot;#docker-compose-set-up&quot; aria-label=&quot;Anchor link for: docker-compose-set-up&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;We use &lt;code&gt;docker-compose&lt;&#x2F;code&gt; to tie it all together. It runs the Nginx service, the Prerender service and optionally also the server you want server-side rendering for: &lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-yaml&quot; data-lang=&quot;yaml&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;version&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;3.7&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;services&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# You would put the service for your website&amp;#39;s server here.
+  # If you do not use Docker for your website&amp;#39;s server, you should remove this. 
+  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;server&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# We assume that the &amp;quot;server&amp;quot; service is internally exposed at the port 10080.
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;expose&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      - &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;10080&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nginx&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;nginx:latest
+    volumes&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# This should be the location of the nginx.conf above.
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;.&#x2F;nginx.conf:&#x2F;etc&#x2F;nginx&#x2F;nginx.conf
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# This assumes you use Let&amp;#39;s Encrypt for your SSL certificate.
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;&#x2F;etc&#x2F;letsencrypt&#x2F;:&#x2F;etc&#x2F;letsencrypt
+    ports&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# The Nginx server is exposed at port 80 and 443 for HTTP and HTTPS traffic respectively.
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;- &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;80:80&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+      - &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;443:443&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;links&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Remove this if you do not use the &amp;quot;server&amp;quot; service for your website&amp;#39;s server. 
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;- &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;server&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# This allows you to connect to localhost of the host machine.
+    # Only needed if your website&amp;#39;s server runs outside of this docker-compose
+    # (i.e. you do not use the &amp;quot;server&amp;quot; service above).
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;extra_hosts&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      - &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;host.docker.internal:host-gateway&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;prerender&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tvanro&#x2F;prerender-alpine:latest
+    environment&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;MEMORY_CACHE&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0
+      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;CACHE_MAXSIZE&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;expose&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      - &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;3000&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# This allows you to connect to localhost of the host machine.
+    # Only needed if your website&amp;#39;s server runs outside of this docker-compose
+    # (i.e. you do not use the &amp;quot;server&amp;quot; service above).
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;extra_hosts&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;:
+      - &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;host.docker.internal:host-gateway&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;If you do not want to use Docker for your website’s server that’s fine. Assuming it’s running on the localhost of your host machine, e.g. &lt;code&gt;http:&#x2F;&#x2F;localhost:10080&lt;&#x2F;code&gt;, you have several options, but the easiest would be changing &lt;code&gt;http:&#x2F;&#x2F;server:10080&lt;&#x2F;code&gt; in &lt;code&gt;nginx.conf&lt;&#x2F;code&gt; to &lt;code&gt;http:&#x2F;&#x2F;host.docker.internal:10080&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;You can configure the prerender service using environment variables. In the above, I disabled caching because in my case it’s unlikely that the same page will be retrived by crawlers more than once in a short period of time. See the documentation of &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;tvanro&#x2F;prerender-alpine&quot;&gt;the Docker image&lt;&#x2F;a&gt; for details.&lt;&#x2F;p&gt;
+&lt;p&gt;Now you can simply run &lt;code&gt;docker-compose up&lt;&#x2F;code&gt; to start up all the necessary services.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;resources&quot;&gt;Resources&lt;a class=&quot;zola-anchor&quot; href=&quot;#resources&quot; aria-label=&quot;Anchor link for: resources&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http:&#x2F;&#x2F;nginx.org&#x2F;en&#x2F;docs&#x2F;beginners_guide.html&quot;&gt;Nginx guide&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.docker.com&#x2F;get-started&#x2F;&quot;&gt;Docker guide&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;docs.docker.com&#x2F;compose&#x2F;gettingstarted&#x2F;&quot;&gt;Docker-compose guide&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>How to handle HTTPS with Nginx</title>
+		<published>2021-03-26T15:30:00+00:00</published>
+		<updated>2021-03-26T15:30:00+00:00</updated>
+		<link href="https://palmik.net/nginx-https/" type="text/html"/>
+		<id>https://palmik.net/nginx-https/</id>
+		<content type="html">&lt;p&gt;How to use Nginx to handle HTTPS and follow all the best practices?&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;hr&#x2F;&gt;
+&lt;p&gt;What do we want to handle?&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Redirect &lt;code&gt;http:&#x2F;&#x2F;example.com&lt;&#x2F;code&gt; to &lt;code&gt;https:&#x2F;&#x2F;example.com&lt;&#x2F;code&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;Redirect &lt;code&gt;https:&#x2F;&#x2F;www.example.com&lt;&#x2F;code&gt; to &lt;code&gt;https:&#x2F;&#x2F;example.com&lt;&#x2F;code&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;Use only modern protocols.&lt;&#x2F;li&gt;
+&lt;li&gt;Use only strong ciphers.&lt;&#x2F;li&gt;
+&lt;li&gt;Use &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Content_Security_Policy&quot;&gt;content security policy (CSP)&lt;&#x2F;a&gt;. &lt;&#x2F;li&gt;
+&lt;li&gt;Use &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;HTTP_Strict_Transport_Security&quot;&gt;HTTP strict transport policy (HSTS)&lt;&#x2F;a&gt; which can prevent downgrade (&lt;code&gt;https&lt;&#x2F;code&gt; –&amp;gt; &lt;code&gt;http&lt;&#x2F;code&gt;) attacks.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Here’s what the config would look like, we will unpack it section-by-section below.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code class=&quot;language-config&quot; data-lang=&quot;config&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;events &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+}
+
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;http &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+  # Handle &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;https:&#x2F;&#x2F;example.com
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;  server &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;{
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;listen &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;443&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt; ssl;
+    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;server_name &lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;example.com;
+
+    # Assuming you use Let&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;s Encrypt for your SSL certificate.
+    ssl_certificate &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;fullchain.pem;
+    ssl_certificate_key &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;privkey.pem;
+
+    ssl_session_timeout 1d;
+    ssl_session_cache builtin:100 shared:SSL:10m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_ciphers &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;;
+    ssl_prefer_server_ciphers on;
+    # curl https:&#x2F;&#x2F;ssl-config.mozilla.org&#x2F;ffdhe2048.txt &amp;gt; &#x2F;path&#x2F;to&#x2F;dhparam
+    ssl_dhparam &#x2F;path&#x2F;to&#x2F;dhparam;
+
+    location &#x2F; {
+      add_header Content-Security-Policy &amp;quot;default-src &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;none&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;;connect-src &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39; www.google-analytics.com;manifest-src &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;;style-src &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;;script-src &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39; www.googletagmanager.com;img-src &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39; www.googletagmanager.com;frame-ancestors &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;;base-uri &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;none&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;;&amp;quot;;
+      add_header Strict-Transport-Security &amp;quot;max-age=15768000; includeSubdomains; preload&amp;quot;;
+      add_header X-Content-Type-Options nosniff;
+      add_header X-Frame-Options SAMEORIGIN;
+      add_header X-XSS-Protection &amp;quot;1; mode=block&amp;quot;;
+
+      proxy_set_header        Host $host;
+      proxy_set_header        X-Real-IP $remote_addr;
+      proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header        X-Forwarded-Proto $scheme;
+
+      # Pass the request to your server.
+      proxy_pass http:&#x2F;&#x2F;server:10080;
+    }
+  }
+  
+  # Redirect http:&#x2F;&#x2F;example.com and http:&#x2F;&#x2F;www.example.com to https:&#x2F;&#x2F;example.com
+  server {
+    listen 80;
+    server_name www.example.com example.com;
+    return 301 https:&#x2F;&#x2F;example.com$request_uri;
+  }
+
+  # Redirect https:&#x2F;&#x2F;www.example.com to https:&#x2F;&#x2F;example.com
+  server {
+    listen 443;
+    server_name www.example.com;
+   
+    ssl_certificate &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;fullchain.pem;
+    ssl_certificate_key &#x2F;etc&#x2F;letsencrypt&#x2F;live&#x2F;example.com&#x2F;privkey.pem;
+
+    ssl_session_timeout 1d;
+    ssl_session_cache builtin:100 shared:SSL:10m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&amp;#39;;
+    ssl_prefer_server_ciphers on;
+    ssl_dhparam &#x2F;path&#x2F;to&#x2F;dhparam;
+    
+    return 301 https:&#x2F;&#x2F;example.com$request_uri;
+  }
+}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;h3 id=&quot;ssl-config&quot;&gt;SSL Config&lt;a class=&quot;zola-anchor&quot; href=&quot;#ssl-config&quot; aria-label=&quot;Anchor link for: ssl-config&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;a href=&quot;http:&#x2F;&#x2F;nginx.org&#x2F;en&#x2F;docs&#x2F;http&#x2F;ngx_http_ssl_module.html#ssl_prefer_server_ciphers&quot;&gt;The Nginx documentation&lt;&#x2F;a&gt; is a great resource to underatand the different SSL config options.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ssl_session_cache&lt;&#x2F;code&gt;: Allows the resue of TLS sessions. &lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;ssl_session_timeout 1d&lt;&#x2F;code&gt;: Maximum recommended value from TLS RFC and from Nginx documentation. Higher value means potentially higher server-side resource use, higher chance that the same TLS session can be reused by the client (lower latency &#x2F; resource use), very high value might affect forward secrecy. &lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;ssl_ciphers&lt;&#x2F;code&gt;: Sets the allowlist of ciphers to only “strong” options, very old clients that do not support any of the strong ciphers might not be able to connect.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;ssl_prefer_server_ciphers off&lt;&#x2F;code&gt;: Lets the client choose the cipher from the allowlist. The client will likely choose the fastest cipher from the allowlist above.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;code&gt;ssl_dhparam&lt;&#x2F;code&gt;: Overrides the default Diffie-Helman parameters which would by default use 1024 bit key (which is within the realm of possibility of being cracked).&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;curl https:&#x2F;&#x2F;ssl-config.mozilla.org&#x2F;ffdhe2048.txt &amp;gt; &#x2F;path&#x2F;to&#x2F;dhparam
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;content-security-policy-header&quot;&gt;Content-Security-Policy header&lt;a class=&quot;zola-anchor&quot; href=&quot;#content-security-policy-header&quot; aria-label=&quot;Anchor link for: content-security-policy-header&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;The header value we use in the config is very conservative, essentially only allowing the site’s origin and Google Analytics to do anything. Let’s unpact it piece-by-piece, as you will likely need to modify it yourself:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;default-src &amp;#39;none&amp;#39;;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Don’t allow anything by default. &lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;connect-src &amp;#39;self&amp;#39; www.google-analytics.com;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Allow requests only to the website’s origin &#x2F; domain and to Google Analytics. &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Headers&#x2F;Content-Security-Policy&#x2F;connect-src&quot;&gt;Documentation&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;manifest-src &amp;#39;self&amp;#39;;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Allow manifest only for the website’s origin &#x2F; domain. &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Headers&#x2F;Content-Security-Policy&#x2F;manifest-src&quot;&gt;Documentation&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;style-src &amp;#39;self&amp;#39;;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Allow styles only for the website’s origin &#x2F; domain. &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Headers&#x2F;Content-Security-Policy&#x2F;style-src&quot;&gt;Documentation&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;script-src &amp;#39;self&amp;#39; www.googletagmanager.com;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Allow script sources only from the website’s origin &#x2F; domain and from Google Analytics. &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Headers&#x2F;Content-Security-Policy&#x2F;script-src&quot;&gt;Documentation&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;img-src &amp;#39;self&amp;#39; www.googletagmanager.com;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Allow image sources only from the website’s origin &#x2F; domain and from Google Analytics. &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Headers&#x2F;Content-Security-Policy&#x2F;img-src&quot;&gt;Documentation&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;frame-ancestors &amp;#39;self&amp;#39;;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Allow only the website’s domain &#x2F; origin itself to embed it in iframe. &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Headers&#x2F;Content-Security-Policy&#x2F;frame-ancestors&quot;&gt;Documentation&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;pre style=&quot;background-color:#2b303b;&quot;&gt;
+&lt;code&gt;&lt;span style=&quot;color:#c0c5ce;&quot;&gt;base-uri &amp;#39;none&amp;#39;;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Do not allow setting any URI in the &lt;code&gt;&amp;lt;base&amp;gt;&lt;&#x2F;code&gt; element. The &lt;code&gt;&amp;lt;base&amp;gt;&lt;&#x2F;code&gt; element allows you to set the URI relative to which sources like &lt;code&gt;&#x2F;foo&#x2F;bar.js&lt;&#x2F;code&gt; are resolved. Setting it to &lt;code&gt;none&lt;&#x2F;code&gt; prevents attackers from changing the URI, which would otherwise allow them to load e.g. any JavaScript they want. &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Headers&#x2F;Content-Security-Policy&#x2F;base-uri&quot;&gt;Documentation&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;x-content-type-options-header&quot;&gt;X-Content-Type-Options header&lt;a class=&quot;zola-anchor&quot; href=&quot;#x-content-type-options-header&quot; aria-label=&quot;Anchor link for: x-content-type-options-header&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Prevents browsers from trying to “guess” the &lt;a href=&quot;https:&#x2F;&#x2F;developer.mozilla.org&#x2F;en-US&#x2F;docs&#x2F;Web&#x2F;HTTP&#x2F;Basics_of_HTTP&#x2F;MIME_types&quot;&gt;MIME type&lt;&#x2F;a&gt; of a resource and makes it instead rely on the explicitly specified type. This makes sure that the browser does not turn non-execuable resource into executable resource.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;strict-transport-security&quot;&gt;Strict-Transport-Security&lt;a class=&quot;zola-anchor&quot; href=&quot;#strict-transport-security&quot; aria-label=&quot;Anchor link for: strict-transport-security&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;This makes sure that future requests to the domain (or its subdomains) will be done exclusivery over HTTPS and never over HTTP. The &lt;code&gt;max-age&lt;&#x2F;code&gt; value determines for how long, since the last request, this should be the case. This means that if you stop serving the website over HTTPS, users will not be able to connect to it (at least not without ignoring a big fat warning first). &lt;&#x2F;p&gt;
+</content>
+	</entry>
+	<entry xml:lang="en">
+		<title>How client-side rendering hinders SEO</title>
+		<published>2021-03-26T15:00:00+00:00</published>
+		<updated>2021-03-26T15:00:00+00:00</updated>
+		<link href="https://palmik.net/client-side-rendering-seo/" type="text/html"/>
+		<id>https://palmik.net/client-side-rendering-seo/</id>
+		<content type="html">&lt;p&gt;You have built the perfect website – perhaps even &lt;em&gt;single-page app&lt;&#x2F;em&gt; (SPA) – using the client-side JavaScript framework du-jour like React, Vue or Svelte.&lt;&#x2F;p&gt;
+&lt;p&gt;Now you want to rank highly on Google Search. What are the common pitfalls of client-rendered sites when it comes to &lt;em&gt;search engine optimization (SEO)&lt;&#x2F;em&gt;?&lt;&#x2F;p&gt;
+&lt;p&gt;Learn the basics of how search engines process web pages and how it’s affecting your site that relies on JavaScript for client-side rendering. &lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;hr&#x2F;&gt;
+&lt;h2 id=&quot;seo-pitfalls-of-spas&quot;&gt;SEO pitfalls of SPAs&lt;a class=&quot;zola-anchor&quot; href=&quot;#seo-pitfalls-of-spas&quot; aria-label=&quot;Anchor link for: seo-pitfalls-of-spas&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;While Google and other major search engines have some support for client-side rendering, it’s important to understand how things work under the hood.&lt;&#x2F;p&gt;
+&lt;p&gt;Search engines process your website in three main stages:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Crawling.&lt;&#x2F;strong&gt; Site is downloaded and HTML processed.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;No JavaScript is executed, the search engine can’t access the HTML that would be generated by your JavaScript code.&lt;&#x2F;li&gt;
+&lt;li&gt;New links from the HTML are potentially added to the crawling queue.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;em&gt;If JavaScript is present, the page is added to the rendering queue, otherwise it goes directly into the index queue.&lt;&#x2F;em&gt; At this stage, different search engines might do things differently, some might send the page for early indexing even if JavaScript (that might change the HTML content of the page) is present.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Rendering.&lt;&#x2F;strong&gt; Site is rendered using a &lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Headless_browser&quot;&gt;headless browser&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;All JavaScript is executed and the search engine can access the final HTML.&lt;&#x2F;li&gt;
+&lt;li&gt;New links from the HTML are potentially added to the crawling queue.&lt;&#x2F;li&gt;
+&lt;li&gt;The page is added to the indexing queue.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Indexing.&lt;&#x2F;strong&gt; The contents of the page are indexed and eventually become discoverable by the users.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;figure &gt;
+  &lt;figcaption&gt;
+     &lt;p&gt;The following diagram from a &lt;a href=&quot;https:&#x2F;&#x2F;developers.google.com&#x2F;search&#x2F;docs&#x2F;guides&#x2F;javascript-seo-basics&quot;&gt;Google article&lt;&#x2F;a&gt; summarizes the situation nicely:&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;figcaption&gt;
+  
+  &lt;img
+    src=&quot;googlebot-crawl-render-index.png&quot;alt=&quot;How googlebot crawls, renders and indexes sites&quot;
+    
+  &#x2F;&gt;
+  
+&lt;&#x2F;figure&gt;
+&lt;h3 id=&quot;client-side-rendering-slows-down-crawling-and-indexing&quot;&gt;Client-side rendering slows down crawling and indexing&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-side-rendering-slows-down-crawling-and-indexing&quot; aria-label=&quot;Anchor link for: client-side-rendering-slows-down-crawling-and-indexing&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;For sites that rely on client-side rendering, the full HTML content only becomes available after the rendering stage. That means that discovery of any new links from the page is delayed. Some search engines also slow down the crawl rate of sites that rely on the rendering stage.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;client-side-rendering-can-lead-to-incorrect-title-and-snippet&quot;&gt;Client-side rendering can lead to incorrect title and snippet&lt;a class=&quot;zola-anchor&quot; href=&quot;#client-side-rendering-can-lead-to-incorrect-title-and-snippet&quot; aria-label=&quot;Anchor link for: client-side-rendering-can-lead-to-incorrect-title-and-snippet&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;The title and description of the page is also commonly handled by JavaScript. This could result in the page being indexed with a wrong title and snippet, until the rendered version of the page is reindexed. I have observed this behaviour with my own site.&lt;&#x2F;p&gt;
+&lt;figure &gt;
+  &lt;figcaption&gt;
+     &lt;p&gt;&lt;strong&gt;With server-side rendering.&lt;&#x2F;strong&gt; Everything is fine:&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;figcaption&gt;
+  
+  &lt;img
+    src=&quot;google_seo_good1.png&quot;alt=&quot;The title and snippet of a search result for SPA with SSR&quot;
+    
+  &#x2F;&gt;
+  
+&lt;&#x2F;figure&gt;
+&lt;figure &gt;
+  &lt;figcaption&gt;
+     &lt;p&gt;&lt;strong&gt;Without server-side rendering.&lt;&#x2F;strong&gt; The title and the snippet in Google search results are the same regardless of the page, since I rely on JavaScript to set the title and the description to the proper values:&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;figcaption&gt;
+  
+  &lt;img
+    src=&quot;google_seo_bad1.png&quot;alt=&quot;The title and the snippet of a search result for SPA without SSR&quot;
+    
+  &#x2F;&gt;
+  
+&lt;&#x2F;figure&gt;
+&lt;h3 id=&quot;renderer-might-use-outdated-headless-browser&quot;&gt;Renderer might use outdated headless browser&lt;a class=&quot;zola-anchor&quot; href=&quot;#renderer-might-use-outdated-headless-browser&quot; aria-label=&quot;Anchor link for: renderer-might-use-outdated-headless-browser&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Depending on the search engine, the browser used for the rendering stage might be outdated. For Google specifically this &lt;a href=&quot;https:&#x2F;&#x2F;developers.google.com&#x2F;search&#x2F;blog&#x2F;2019&#x2F;05&#x2F;the-new-evergreen-googlebot&quot;&gt;should no longer be an issue&lt;&#x2F;a&gt;. You can use Google’s &lt;a href=&quot;https:&#x2F;&#x2F;support.google.com&#x2F;webmasters&#x2F;answer&#x2F;9012289?hl=en&quot;&gt;URL inspection tool&lt;&#x2F;a&gt; to check what your site would look like to Google after rendering.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;server-side-rendering-to-the-rescue&quot;&gt;Server-side rendering to the rescue&lt;a class=&quot;zola-anchor&quot; href=&quot;#server-side-rendering-to-the-rescue&quot; aria-label=&quot;Anchor link for: server-side-rendering-to-the-rescue&quot;&gt;🔗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Does you website rely on JavaScript for client-side rendering? Then it probably suffers from all of the above. &lt;&#x2F;p&gt;
+&lt;p&gt;Don’t worry, no matter how your site works or whichever framework it’s using, you can use the approach described in &lt;a href=&quot;&#x2F;universal-ssr&quot;&gt;&lt;strong&gt;Universal server-side rendering&lt;&#x2F;strong&gt;&lt;&#x2F;a&gt; to add server-side rendering on top of your website &lt;em&gt;without having to rewrite any of your existing code&lt;&#x2F;em&gt;. &lt;&#x2F;p&gt;
+</content>
+	</entry>
 	<entry xml:lang="en">
 		<title>Conditional Probability, Fast and Slow</title>
 		<published>2021-03-20T00:00:00+00:00</published>
